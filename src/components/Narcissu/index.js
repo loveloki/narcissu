@@ -1,7 +1,9 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { Slate, Editable, withReact } from 'slate-react'
 import { createEditor } from 'slate'
 import { withHistory } from 'slate-history'
+
+import Element from '../element'
 
 import './index.css'
 
@@ -13,6 +15,8 @@ const Narcissu = () => {
     },
   ])
 
+  const renderElement = useCallback(props => <Element {...props} />, [])
+
   const editor = useMemo(() => withReact(withHistory(createEditor())), [])
 
   return (
@@ -22,7 +26,9 @@ const Narcissu = () => {
         value={value}
         onChange={value => setValue(value)}
       >
-        <Editable />
+        <Editable
+          renderElement={renderElement}
+        />
       </Slate>
     </main>
   )
