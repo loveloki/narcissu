@@ -1,5 +1,6 @@
 //处理返回不同元素
 import React from 'react'
+import './index.css'
 
 const Element = ({ attributes, children, element }) => {
   switch (element.type) {
