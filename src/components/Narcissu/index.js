@@ -4,6 +4,7 @@ import { createEditor } from 'slate'
 import { withHistory } from 'slate-history'
 
 import Element from '../element'
+import withPlugins from '../../plugins'
 
 import './index.css'
 
@@ -17,7 +18,7 @@ const Narcissu = () => {
 
   const renderElement = useCallback(props => <Element {...props} />, [])
 
-  const editor = useMemo(() => withReact(withHistory(createEditor())), [])
+  const editor = useMemo(() => withPlugins(withReact(withHistory(createEditor()))), [])
 
   return (
     <main className='narcissu'>
