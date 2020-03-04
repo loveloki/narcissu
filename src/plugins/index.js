@@ -1,6 +1,8 @@
 //处理所有插件逻辑
 import withShortcuts from './shortcuts'
-const PLUGINS = [withShortcuts]
+import withDelete from './delete'
+
+const PLUGINS = [withShortcuts, withDelete]
 
 const withPlugins = editor => {
   return PLUGINS.reduce(
