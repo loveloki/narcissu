@@ -1,5 +1,5 @@
 //按下回车键的行为
-import { Editor, Range } from 'slate'
+import { Editor, Range, Transforms } from 'slate'
 
 const withInsertBreak = editor => {
   const { insertBreak } = editor
@@ -21,6 +21,15 @@ const withInsertBreak = editor => {
 
       if (isPoint && text === '' && block.type !== 'paragraph') {
         editor.deleteBackward('character')
+
+        return
+      }
+
+      if (block.type.includes('heading')) {
+        insertBreak()
+        Transforms.setNodes(editor,{
+          type: 'paragraph'
+        })
 
         return
       }
