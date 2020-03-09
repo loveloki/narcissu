@@ -1,6 +1,141 @@
+/* #region 主布局 */
+html, body, #root{
+  min-height: 100vh;
+}
+
+#root {
+  display: flex;
+}
+
+.side {
+  width: 20em;
+}
+
+.main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
 .narcissu {
+  flex: 1;
+  justify-content: center;
+  align-self: center;
   max-width: 42em;
-  background: #fff;
-  margin: 20px auto;
+  min-width: 50%;
+  margin: 20px;
   padding: 20px;
+}
+
+/* #endregion */
+
+/* #region 使用sticky固定 */
+
+.side .content {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.main header {
+  position: sticky;
+  top: 0;
+}
+
+.main footer {
+  position: sticky;
+  bottom: 0;
+}
+/* #endregion */
+
+/* #region css图标 */
+css-icon {
+  display: inline-block;
+  height: 1em; width: 1em;
+  font-size: 20px;
+  color: #333;
+  box-sizing: border-box;
+  text-indent: -9999px;
+  vertical-align: middle;
+  position: relative;
+}
+css-icon::before,
+css-icon::after {
+  content: '';
+  box-sizing: inherit;
+  position: absolute;
+  left: 50%; top: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.icon-menu::before {
+  box-shadow: 0 -.35em, 0 .35em;
+  border-top: 2px solid;
+  width: 100%;
+}
+
+.icon-arrow-left::before {
+  height: .65em; width: .65em;
+  border-style: solid;
+  border-width: 2px 0 0 2px;
+  -ms-transform: translate(-25%, -50%) rotate(-45deg);
+  transform: translate(-25%, -50%) rotate(-45deg);
+}
+
+.icon-arrow-right::before {
+  height: .65em; width: .65em;
+  border-style: solid;
+  border-width: 2px 0 0 2px;
+  -ms-transform: translate(-75%, -50%) rotate(135deg);
+  transform: translate(-75%, -50%) rotate(135deg);
+}
+
+.icon-box {
+  width: 50px;
+  height: 50px;
+  position: relative;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.icon-box css-icon {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  margin: auto;
+  -ms-pointer-events: none;
+  pointer-events: none;
+}
+/* #endregion */
+
+
+/* #region 配色 */
+body {
+  background: #9BC1BC;
+}
+
+.side .content {
+  background: #C1EEFF;
+}
+
+.main header {
+  background: #BBE1C3;
+}
+
+.narcissu {
+  background: #E6EBE0;
+  color: #363732;
+}
+
+.main footer {
+  background: #BBE1C3;
+}
+
+/* #endregion */
+
+.close-side {
+ margin-left: 0;
 }

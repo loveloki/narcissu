@@ -25,18 +25,57 @@ const Narcissu = () => {
     StorageManager.set('value', value)
   }, [value])
 
+  const clickSideArrow = (event) => {
+    const arrow = event.target.firstChild
+    const className = arrow.className
+
+    //改变箭头方向
+    if (className === 'icon-arrow-left') {
+      event.target.firstChild.className = 'icon-arrow-right'
+
+      //隐藏侧边栏
+      const side = document.querySelector('.side')
+      side.style.display = 'none'
+      document.querySelector(".main").classList.add('close-side')
+    } else {
+      event.target.firstChild.className = 'icon-arrow-left'
+      //显示侧边栏
+      const side = document.querySelector('.side')
+      side.style.display = 'block'
+      document.querySelector(".main").classList.remove('close-side')
+    }
+  }
+
   return (
-    <main className='narcissu'>
-      <Slate
-        editor={editor}
-        value={value}
-        onChange={value => setValue(value)}
-      >
-        <Editable
-          renderElement={renderElement}
-        />
-      </Slate>
-    </main>
+    <>
+      <div className='side'>
+        <div className='content'>
+        </div>
+      </div>
+      <main className='main'>
+        <header>
+          <div className='icon-box'>
+            <css-icon class="icon-menu"></css-icon>
+          </div>
+        </header>
+        <main className='narcissu'>
+          <Slate
+            editor={editor}
+            value={value}
+            onChange={value => setValue(value)}
+          >
+            <Editable
+              renderElement={renderElement}
+            />
+          </Slate>
+        </main>
+        <footer>
+          <div className='icon-box' onClick={clickSideArrow}>
+            <css-icon class="icon-arrow-left"></css-icon>
+          </div>
+        </footer>
+      </main>
+    </>
   )
 }
 
