@@ -2,14 +2,17 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Slate, Editable, withReact } from 'slate-react'
 import { createEditor } from 'slate'
 import { withHistory } from 'slate-history'
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+
 
 import Element from '../element'
 import StorageManager from '../../constants/storage'
 import withPlugins from '../../plugins'
+import Settings from '../settings'
 
 import './index.css'
 
-const Narcissu = () => {
+const Home = () => {
   const [value, setValue] = useState(StorageManager.get('value') || [
     {
       type: 'paragraph',
@@ -54,9 +57,11 @@ const Narcissu = () => {
       </div>
       <main className='main'>
         <header>
-          <div className='icon-box'>
-            <css-icon class="icon-menu"></css-icon>
-          </div>
+          <Link to='/settings'>
+            <div className='icon-box'>
+              <css-icon class="icon-menu"></css-icon>
+            </div>
+          </Link>
         </header>
         <main className='narcissu'>
           <Slate
@@ -76,6 +81,17 @@ const Narcissu = () => {
         </footer>
       </main>
     </>
+  )
+}
+
+const Narcissu = () => {
+  return (
+    <Router>
+      <Switch>
+        <Route path='/settings' component={Settings} />
+        <Route path='/' component={Home} />
+      </Switch>
+    </Router>
   )
 }
 
