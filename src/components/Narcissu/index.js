@@ -24,6 +24,8 @@ const Home = () => {
 
   const editor = useMemo(() => withPlugins(withReact(withHistory(createEditor()))), [])
 
+  const config = StorageManager.all()
+
   useEffect(() => {
     StorageManager.set('value', value)
   }, [value])
@@ -38,20 +40,24 @@ const Home = () => {
 
       //隐藏侧边栏
       const side = document.querySelector('.side')
-      side.style.display = 'none'
+      side.classList.add('side-is-close')
       document.querySelector(".main").classList.add('close-side')
+
+      StorageManager.set('sideIsClose', true)
     } else {
       event.target.firstChild.className = 'icon-arrow-left'
       //显示侧边栏
       const side = document.querySelector('.side')
-      side.style.display = 'block'
+      side.classList.remove('side-is-close')
       document.querySelector(".main").classList.remove('close-side')
+
+      StorageManager.set('sideIsClose', false)
     }
   }
 
   return (
     <>
-      <div className='side'>
+      <div className={config.sideIsClose ? 'side side-is-close' : 'side'}>
         <div className='content'>
         </div>
       </div>
@@ -76,7 +82,7 @@ const Home = () => {
         </main>
         <footer>
           <div className='icon-box' onClick={clickSideArrow}>
-            <css-icon class="icon-arrow-left"></css-icon>
+            <css-icon class={config.sideIsClose ? "icon-arrow-right" : "icon-arrow-left"}></css-icon>
           </div>
         </footer>
       </main>

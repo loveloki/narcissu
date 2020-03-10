@@ -12,6 +12,17 @@ const StorageManager = {
   },
   clear: () => {
     localStorage.clear()
+  },
+  all: () => {
+    const list = {}
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      const value = StorageManager.get(key)
+
+      list[key] = value
+    }
+
+    return list
   }
 }
 

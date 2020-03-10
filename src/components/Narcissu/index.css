@@ -139,3 +139,7 @@ body {
 .close-side {
  margin-left: 0;
 }
+
+.side-is-close {
+  display: none;
+}
