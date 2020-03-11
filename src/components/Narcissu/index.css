@@ -111,7 +111,6 @@ css-icon::after {
 }
 /* #endregion */
 
-
 /* #region 配色 */
 body {
   background: #9BC1BC;
@@ -136,6 +135,14 @@ body {
 
 /* #endregion */
 
+/* #region config */
+.side-position-left {
+  order: 0;
+}
+.side-position-right {
+  order: 1;
+}
+
 .close-side {
  margin-left: 0;
 }
@@ -143,3 +150,4 @@ body {
 .side-is-close {
   display: none;
 }
+/* #endregion */

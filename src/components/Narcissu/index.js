@@ -57,7 +57,11 @@ const Home = () => {
 
   return (
     <>
-      <div className={config.sideIsClose ? 'side side-is-close' : 'side'}>
+      <div className={(() => {
+        const close = config.sideIsClose ? 'side side-is-close' : 'side'
+        const position = config.sidePosition === 'left' ? 'side-position-left' : 'side-position-right'
+        return close + " " + position
+        })()}>
         <div className='content'>
         </div>
       </div>
