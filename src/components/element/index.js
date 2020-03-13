@@ -22,6 +22,13 @@ const Element = ({ attributes, children, element }) => {
       return <h6 {...attributes}>{children}</h6>
     case 'list-item':
       return <li {...attributes}>{children}</li>
+    case 'thematic-break':
+      return <div {...attributes}>
+              <div contentEditable={false}>
+                <hr />
+                {children}
+              </div>
+            </div>
     default:
       return <p {...attributes}>{children}</p>
   }

@@ -15,7 +15,7 @@ const SHORTCUTS = {
 }
 
 const withShortcuts = editor => {
-  const { insertText } = editor
+  const { insertText, insertBreak } = editor
 
   editor.insertText = text => {
     const { selection } = editor
@@ -72,6 +72,39 @@ const withShortcuts = editor => {
 
     //否则执行默认插入
     insertText(text)
+  }
+
+  editor.insertBreak = () => {
+    const { selection } = editor
+
+    if (selection) {
+      const leaf = Editor.leaf(editor, selection)
+      const text = leaf[0].text.replace(/ /g, '')
+      const firstLetter = text[0]
+      const length = text.length
+
+      if (length > 2
+          && (firstLetter === '-' || firstLetter === '_' || firstLetter === '*')
+          && text === firstLetter.repeat(length)
+      ) {
+        const type = 'thematic-break'
+
+        Transforms.setNodes(
+          editor,
+          {type},
+          {match: n => Editor.isBlock(editor, n)}
+        )
+
+        Transforms.insertNodes(
+          editor,
+          { type: 'paragraph', children: [{ text: '' }] },
+        )
+
+        return
+      }
+    }
+
+    insertBreak()
   }
 
   return editor
