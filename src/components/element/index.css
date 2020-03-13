@@ -1,3 +1,17 @@
+/*
+ * 由::before生成的伪元素 包含在元素格式框内, 因此不能应用在替换元素上,比如<img>或<br> 元素。
+ * 所以将.block应用 relative, 使相对于.block 定位。
+*/
+
+.narcissu p, .narcissu .block, .narcissu ul {
+  position: relative;
+}
+
+.block {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
 blockquote {
   border-left: 2px solid #ddd;
   margin-left: 0;
@@ -5,4 +19,25 @@ blockquote {
   padding-left: 10px;
   color: #aaa;
   font-style: italic;
+}
+
+.tip::before {
+  content: attr(data-tip);
+  position: absolute;
+  top: 0;
+  left: -50px;
+  width: 25px;
+  border: 1px #aaaaaa solid;
+  border-radius: 5px;
+  background-color: #ffffcc;
+  padding: 5px;
+  margin-top: -5px;
+  color: #000000;
+  text-align: center;
+  font-size: 14px;
+  z-index: 1;
+}
+
+.hrTip::before {
+  top: -10px;
 }
