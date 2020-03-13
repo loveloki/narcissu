@@ -83,6 +83,7 @@ const withShortcuts = editor => {
       const firstLetter = text[0]
       const length = text.length
 
+      //专门的换行
       if (length > 2
           && (firstLetter === '-' || firstLetter === '_' || firstLetter === '*')
           && text === firstLetter.repeat(length)
@@ -98,6 +99,27 @@ const withShortcuts = editor => {
         Transforms.insertNodes(
           editor,
           { type: 'paragraph', children: [{ text: '' }] },
+        )
+
+        return
+      }
+
+      //围栏代码块
+      const theFirstThreeText = text.slice(0, 3)
+      const theRestText = text.slice(3)
+      if (theFirstThreeText === '```') {
+        const type = 'fenced-code-blocks'
+        const lang = theRestText
+
+        const path = Editor.path(editor, selection)
+        const range = Editor.range(editor, path)
+        Transforms.select(editor, range)
+        Transforms.delete(editor)
+
+        Transforms.setNodes(
+          editor,
+          {type, lang},
+          {match: n => Editor.isBlock(editor, n)}
         )
 
         return

@@ -12,6 +12,7 @@ const typeList = {
   'heading-five' : 'h5',
   'heading-six' : 'h6',
   'thematic-break': 'hr',
+  'fenced-code-blocks': 'code',
 }
 
 const Element = props => {
@@ -28,6 +29,7 @@ const Element = props => {
     case 'heading-five':
     case 'heading-six':
     case 'thematic-break':
+    case 'fenced-code-blocks':
       return <LeafBlocks {...props} type={typeList[element.type]} isTypeTipOpen={isTypeTipOpen} />
     case 'block-quote':
       return <blockquote data-tip={'quote'} className={(isTypeTipOpen && focused && selected) ? 'tip' : ''} {...attributes}>{children}</blockquote>
@@ -62,6 +64,8 @@ const LeafBlocks = props => {
 
   if (type === 'hr') {
     return <ThematicBreak {...props} selected={selected} focused={focused} />
+  } else if (type === 'code') {
+    return <FencedCodeBlocks {...props} selected={selected} focused={focused} />
   }
 
   return <Type data-tip={type} className={(isTypeTipOpen && focused && selected) ? 'tip' + adjustClassName : ''} {...attributes}>{children}</Type>
@@ -85,6 +89,17 @@ const ThematicBreak = props => {
     </div>
   )
 
+}
+
+const FencedCodeBlocks = props => {
+  const { attributes, children, selected, focused, isTypeTipOpen, element } = props
+  const { lang } = element
+
+  return (
+    <pre className={(isTypeTipOpen && focused && selected) ? 'tip' : ''} data-tip={'code'}>
+      <code {...attributes} className={ 'language-' + lang}>{children}</code>
+    </pre>
+  )
 }
 
 export default Element
