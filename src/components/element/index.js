@@ -1,8 +1,10 @@
 //处理返回不同元素
 import React from 'react'
 import './index.css'
+import { useSelected, useFocused } from 'slate-react'
 
-const Element = ({ attributes, children, element }) => {
+const Element = props => {
+  const { attributes, children, element } = props
   switch (element.type) {
     case 'block-quote':
       return <blockquote {...attributes}>{children}</blockquote>
@@ -23,15 +25,27 @@ const Element = ({ attributes, children, element }) => {
     case 'list-item':
       return <li {...attributes}>{children}</li>
     case 'thematic-break':
-      return <div {...attributes}>
-              <div contentEditable={false}>
-                <hr />
-                {children}
-              </div>
-            </div>
+      return <ThematicBreak { ...props } />
     default:
       return <p {...attributes}>{children}</p>
   }
+}
+
+const ThematicBreak = ({ attributes, children }) => {
+  const selected = useSelected()
+  const focused = useFocused()
+
+  return (
+    <div {...attributes}>
+      <div contentEditable={false}>
+        <hr style={
+          { boxShadow: (selected && focused) ? '0 0 0 3px #B4D5FF' : 'none'}
+        } />
+      </div>
+      {children}
+    </div>
+  )
+
 }
 
 export default Element

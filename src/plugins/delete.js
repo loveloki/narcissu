@@ -48,6 +48,10 @@ const withDelete = editor => {
 
           }
 
+          if (block.type === 'thematic-break') {
+            Transforms.removeNodes(editor)
+          }
+
           return
         }
       }
