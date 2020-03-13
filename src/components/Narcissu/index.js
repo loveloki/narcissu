@@ -11,6 +11,7 @@ import withPlugins from '../../plugins'
 import Settings from '../settings'
 
 import './index.css'
+import defaultConfig from '../../constants/config'
 
 const Home = () => {
   const [value, setValue] = useState(StorageManager.get('value') || [
@@ -23,6 +24,18 @@ const Home = () => {
   const renderElement = useCallback(props => <Element {...props} />, [])
 
   const editor = useMemo(() => withPlugins(withReact(withHistory(createEditor()))), [])
+
+  //检查是否初始化
+  const initialized = StorageManager.get('initialized')
+  if (!initialized) {
+    for (const key in defaultConfig) {
+      if (defaultConfig.hasOwnProperty(key)) {
+        const value = defaultConfig[key]
+
+        StorageManager.set(key, value)
+      }
+    }
+  }
 
   const config = StorageManager.all()
 
