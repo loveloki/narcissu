@@ -154,4 +154,5 @@ body {
 
 .main header {
   display: flex;
+  z-index: 1;
 }
