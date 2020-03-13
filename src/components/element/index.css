@@ -3,13 +3,31 @@
  * 所以将.block应用 relative, 使相对于.block 定位。
 */
 
-.narcissu p, .narcissu .block, .narcissu ul {
+.narcissu p, .narcissu .block, .narcissu ul, .narcissu h1, .narcissu h2, .narcissu h3, .narcissu h4, .narcissu h5, .narcissu h6 {
   position: relative;
 }
 
 .block {
   margin-top: 1em;
   margin-bottom: 1em;
+}
+
+.narcissu h1 {
+  font-size: 2.4em;
+  padding-bottom: 1em;
+  border-bottom: 3px double #8ac6d1;
+}
+.narcissu h2 {
+  font-size: 1.8em;
+}
+.narcissu h3 {
+  font-size: 1.6em;
+}
+.narcissu h4 {
+  font-size: 1.4em;
+}
+.narcissu h5, .narcissu h6 {
+  font-size: 1.2em;
 }
 
 blockquote {
@@ -38,6 +56,22 @@ blockquote {
   z-index: 1;
 }
 
-.hrTip::before {
+.tipHr::before {
   top: -10px;
+}
+
+.tipH1::before {
+  top: 16px;
+}
+
+.tipH2::before {
+  top: 9px;
+}
+
+.tipH3::before {
+  top: 6px;
+}
+
+.tipH4::before {
+  top: 5px;
 }
