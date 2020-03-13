@@ -23,15 +23,20 @@ const Settings = () => {
       } else {
         btn.classList.add('active')
 
-
-        StorageManager.set(key, value)
+        //getAttribute获取到的是字符串，加入判断是否存入boolean
+        if (value === 'true' || value === 'false') {
+          StorageManager.set(key, JSON.parse(value))
+        } else {
+          StorageManager.set(key, value)
+        }
       }
     })
   }
 
   const isActive = (key, value) => {
-    const text = StorageManager.get(key)
-    if (text === value) {
+    const result = StorageManager.get(key)
+
+    if (result === value) {
       return 'active'
     }
 
@@ -47,6 +52,13 @@ const Settings = () => {
         </div>
         <button type='button' className={'btn setting-2-1 ' + isActive('sidePosition', 'left')} data-value='left'>左侧</button>
         <button type='button' className={'btn setting-2-2 ' + isActive('sidePosition', 'right')} data-value='right'>右侧</button>
+      </div>
+      <div className='config' onClick={handleClick} data-key='isTypeTipOpen'>
+        <div className='title'>
+          <p>类型提示</p>
+        </div>
+        <button type='button' className={'btn setting-2-1 ' + isActive('isTypeTipOpen', false)} data-value='false'>关闭</button>
+        <button type='button' className={'btn setting-2-2 ' + isActive('isTypeTipOpen', true)} data-value='true'>开启</button>
       </div>
     </main>
   )

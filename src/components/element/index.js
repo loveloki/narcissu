@@ -2,6 +2,7 @@
 import React from 'react'
 import './index.css'
 import { useSelected, useFocused } from 'slate-react'
+import StorageManager from '../../constants/storage'
 
 const typeList = {
   'heading-one' : 'h1',
@@ -15,6 +16,7 @@ const typeList = {
 
 const Element = props => {
   const { attributes, children, element } = props
+  const isTypeTipOpen = StorageManager.get('isTypeTipOpen')
   const selected = useSelected()
   const focused = useFocused()
 
@@ -26,20 +28,20 @@ const Element = props => {
     case 'heading-five':
     case 'heading-six':
     case 'thematic-break':
-      return <LeafBlocks {...props} type={typeList[element.type]} />
+      return <LeafBlocks {...props} type={typeList[element.type]} isTypeTipOpen={isTypeTipOpen} />
     case 'block-quote':
-      return <blockquote data-tip={'quote'} className={(focused && selected) ? 'tip' : ''} {...attributes}>{children}</blockquote>
+      return <blockquote data-tip={'quote'} className={(isTypeTipOpen && focused && selected) ? 'tip' : ''} {...attributes}>{children}</blockquote>
     case 'bulleted-list':
-      return <ul data-tip={'ul'} className={(focused && selected) ? 'tip' : ''} {...attributes}>{children}</ul>
+      return <ul data-tip={'ul'} className={(isTypeTipOpen && focused && selected) ? 'tip' : ''} {...attributes}>{children}</ul>
     case 'list-item':
       return <li {...attributes}>{children}</li>
     default:
-      return <LeafBlocks {...props} type={'p'} />
+      return <LeafBlocks {...props} type={'p'} isTypeTipOpen={isTypeTipOpen} />
   }
 }
 
 const LeafBlocks = props => {
-  const { attributes, children, type } = props
+  const { attributes, children, type, isTypeTipOpen } = props
   const Type = type
   const selected = useSelected()
   const focused = useFocused()
@@ -62,17 +64,17 @@ const LeafBlocks = props => {
     return <ThematicBreak {...props} selected={selected} focused={focused} />
   }
 
-  return <Type data-tip={type} className={(focused && selected) ? 'tip' + adjustClassName : ''} {...attributes}>{children}</Type>
+  return <Type data-tip={type} className={(isTypeTipOpen && focused && selected) ? 'tip' + adjustClassName : ''} {...attributes}>{children}</Type>
 }
 
 const ThematicBreak = props => {
-  const { attributes, children, selected, focused } = props
+  const { attributes, children, selected, focused, isTypeTipOpen } = props
 
   return (
     <div {...attributes} className='block'>
       <div contentEditable={false}>
         <hr
-          className={(focused && selected) ? 'tip tipHr' : ''}
+          className={(isTypeTipOpen && focused && selected) ? 'tip tipHr' : ''}
           style={
             { boxShadow: (selected && focused) ? '0 0 0 3px #B4D5FF' : 'none' }
           }
