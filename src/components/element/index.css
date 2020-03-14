@@ -80,3 +80,7 @@ pre {
 .tipH4::before {
   top: 5px;
 }
+
+.tipCode::before {
+  top: 10px;
+}

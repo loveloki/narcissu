@@ -96,7 +96,7 @@ const FencedCodeBlocks = props => {
   const { lang } = element
 
   return (
-    <pre className={(isTypeTipOpen && focused && selected) ? 'tip' : ''} data-tip={'code'}>
+    <pre className={(isTypeTipOpen && focused && selected) ? 'tip tipCode' : ''} data-tip={'code'}>
       <code {...attributes} className={ 'language-' + lang}>{children}</code>
     </pre>
   )
