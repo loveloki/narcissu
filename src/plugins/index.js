@@ -2,9 +2,9 @@
 import withShortcuts from './shortcuts'
 import withDelete from './delete'
 import withInsertBreak from './insertBreak'
-import withVoid from './void'
+import withSpecial from './special'
 
-const PLUGINS = [withShortcuts, withDelete, withInsertBreak, withVoid]
+const PLUGINS = [withShortcuts, withDelete, withInsertBreak, withSpecial]
 
 const withPlugins = editor => {
   return PLUGINS.reduce(
