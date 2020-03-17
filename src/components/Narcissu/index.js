@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Slate, Editable, withReact } from 'slate-react'
-import { createEditor } from 'slate'
+import { createEditor, Text } from 'slate'
 import { withHistory } from 'slate-history'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 
@@ -12,6 +12,7 @@ import Settings from '../settings'
 
 import './index.css'
 import defaultConfig from '../../constants/config'
+import Leaf from '../leaf'
 
 const Home = () => {
   const [value, setValue] = useState(StorageManager.get('value') || [
@@ -22,6 +23,7 @@ const Home = () => {
   ])
 
   const renderElement = useCallback(props => <Element {...props} />, [])
+  const renderLeaf = useCallback(props => <Leaf {...props} />, [])
 
   const editor = useMemo(() => withPlugins(withReact(withHistory(createEditor()))), [])
 
@@ -68,6 +70,42 @@ const Home = () => {
     }
   }
 
+  //两个捕获组，捕获label和link, ?启动惰性匹配
+  //label为非]的任意字符
+  //link为非)的任意字符
+  const RegexRules = {
+    em: /(\*|_)([^\*\_]*?)(\1)/g,
+    link: /\[([^\]]*)]\(([^)]*)\)/g,
+  }
+
+  const decorate = useCallback(([node, path]) => {
+    const ranges = []
+
+    if (!Text.isText(node)) {
+      return ranges
+    }
+
+    const regex = RegexRules.em
+    const tokens = []
+    let m
+    while ((m = regex.exec(node.text)) !== null) {
+      const start = m.index
+      const end = start + m[0].length
+      tokens.push({start, end })
+    }
+
+    //处理tokens
+    tokens.forEach(({start, end}) => {
+      ranges.push({
+        type: 'em',
+        anchor: { path, offset: start },
+        focus: { path, offset: end },
+      })
+    })
+
+    return ranges
+  }, [])
+
   return (
     <>
       <div className={(() => {
@@ -93,7 +131,9 @@ const Home = () => {
             onChange={value => setValue(value)}
           >
             <Editable
+              decorate={decorate}
               renderElement={renderElement}
+              renderLeaf={renderLeaf}
             />
           </Slate>
         </main>
@@ -117,5 +157,6 @@ const Narcissu = () => {
     </Router>
   )
 }
+
 
 export default Narcissu

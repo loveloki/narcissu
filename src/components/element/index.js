@@ -3,6 +3,7 @@ import React from 'react'
 import './index.css'
 import { useSelected, useFocused } from 'slate-react'
 import StorageManager from '../../constants/storage'
+import { Editor } from 'slate'
 
 const typeList = {
   'heading-one' : 'h1',
@@ -37,6 +38,8 @@ const Element = props => {
       return <ul data-tip={'ul'} className={(isTypeTipOpen && focused && selected) ? 'tip' : ''} {...attributes}>{children}</ul>
     case 'list-item':
       return <li {...attributes}>{children}</li>
+    case 'link':
+      return <Link {...props} />
     default:
       return <LeafBlocks {...props} type={'p'} isTypeTipOpen={isTypeTipOpen} />
   }
@@ -99,6 +102,22 @@ const FencedCodeBlocks = props => {
     <pre className={(isTypeTipOpen && focused && selected) ? 'tip tipCode' : ''} data-tip={'code'}>
       <code {...attributes} className={ 'language-' + lang}>{children}</code>
     </pre>
+  )
+}
+
+const Link = props => {
+  const { element,  attributes, children } = props
+  const { url } = element
+
+  const isLinkActive = editor => {
+    const [link] = Editor.nodes(editor, { match: n => n.type === 'link' })
+    return !!link
+  }
+
+  return (
+    <a {...attributes} href={url}>
+      {children}
+    </a>
   )
 }
 
