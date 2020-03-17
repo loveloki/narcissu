@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Slate, Editable, withReact } from 'slate-react'
-import { createEditor, Text, Transforms, Editor, Range } from 'slate'
+import { createEditor } from 'slate'
 import { withHistory } from 'slate-history'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 
@@ -13,22 +13,6 @@ import Settings from '../settings'
 import './index.css'
 import defaultConfig from '../../constants/config'
 import Leaf from '../leaf'
-
-const insertLink = (editor, link) => {
-  console.log(editor);
-  const { selection } = editor
-  const isCollapsed = selection && Range.isCollapsed(selection)
-  if (isCollapsed) {
-    // Transforms.insertNodes(editor,{
-    //   type: 'paragraph',
-    //   children: [{ text: '插入！' }],
-    // })
-  } else {
-    console.log('no!');
-
-  }
-
-}
 
 const Home = () => {
   const [value, setValue] = useState(StorageManager.get('value') || [
@@ -86,54 +70,6 @@ const Home = () => {
     }
   }
 
-  //两个捕获组，捕获label和link, ?启动惰性匹配
-  //label为非]的任意字符
-  //link为非)的任意字符
-  //?:为非捕获分组
-  const RegexRules = {
-    em: /(\*|_)([^\*\_]+?)(\1)/g,
-    strong: /((?:\*|_){2})([^\*\_]*?)(\1)/g,
-    link: /\[([^\]]*)]\(([^)]*)\)/g,
-  }
-
-  const tokenize = (text) => {
-    const tokens = []
-    for (const type in RegexRules) {
-      if (RegexRules.hasOwnProperty(type)) {
-        const regex = RegexRules[type]
-        let m
-
-        while ((m = regex.exec(text)) !== null) {
-          const start = m.index
-          const end = start + m[0].length
-          tokens.push({ start, end, type, match: m })
-        }
-      }
-    }
-
-    return tokens
-  }
-
-  const decorate = useCallback(([node, path]) => {
-    const ranges = []
-
-    if (!Text.isText(node)) {
-      return ranges
-    }
-
-    const tokens = tokenize(node.text)
-    //处理tokens
-    tokens.forEach(({start, end, type, match}) => {
-        ranges.push({
-          type,
-          match,
-          anchor: { path, offset: start },
-          focus: { path, offset: end },
-        })
-    })
-
-    return ranges
-  }, [])
 
   return (
     <>
@@ -160,7 +96,6 @@ const Home = () => {
             onChange={value => setValue(value)}
           >
             <Editable
-              decorate={decorate}
               renderElement={renderElement}
               renderLeaf={renderLeaf}
             />
