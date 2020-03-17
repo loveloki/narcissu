@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Slate, Editable, withReact } from 'slate-react'
-import { createEditor, Text } from 'slate'
+import { createEditor, Text, Transforms, Editor, Range } from 'slate'
 import { withHistory } from 'slate-history'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 
@@ -13,6 +13,22 @@ import Settings from '../settings'
 import './index.css'
 import defaultConfig from '../../constants/config'
 import Leaf from '../leaf'
+
+const insertLink = (editor, link) => {
+  console.log(editor);
+  const { selection } = editor
+  const isCollapsed = selection && Range.isCollapsed(selection)
+  if (isCollapsed) {
+    // Transforms.insertNodes(editor,{
+    //   type: 'paragraph',
+    //   children: [{ text: '插入！' }],
+    // })
+  } else {
+    console.log('no!');
+
+  }
+
+}
 
 const Home = () => {
   const [value, setValue] = useState(StorageManager.get('value') || [
@@ -77,7 +93,7 @@ const Home = () => {
   const RegexRules = {
     em: /(\*|_)([^\*\_]+?)(\1)/g,
     strong: /((?:\*|_){2})([^\*\_]*?)(\1)/g,
-    // link: /\[([^\]]*)]\(([^)]*)\)/g,
+    link: /\[([^\]]*)]\(([^)]*)\)/g,
   }
 
   const tokenize = (text) => {
@@ -90,7 +106,7 @@ const Home = () => {
         while ((m = regex.exec(text)) !== null) {
           const start = m.index
           const end = start + m[0].length
-          tokens.push({ start, end, type })
+          tokens.push({ start, end, type, match: m })
         }
       }
     }
@@ -107,12 +123,13 @@ const Home = () => {
 
     const tokens = tokenize(node.text)
     //处理tokens
-    tokens.forEach(({start, end, type}) => {
-      ranges.push({
-        type,
-        anchor: { path, offset: start },
-        focus: { path, offset: end },
-      })
+    tokens.forEach(({start, end, type, match}) => {
+        ranges.push({
+          type,
+          match,
+          anchor: { path, offset: start },
+          focus: { path, offset: end },
+        })
     })
 
     return ranges
@@ -169,6 +186,5 @@ const Narcissu = () => {
     </Router>
   )
 }
-
 
 export default Narcissu
