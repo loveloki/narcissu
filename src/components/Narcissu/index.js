@@ -73,9 +73,29 @@ const Home = () => {
   //两个捕获组，捕获label和link, ?启动惰性匹配
   //label为非]的任意字符
   //link为非)的任意字符
+  //?:为非捕获分组
   const RegexRules = {
-    em: /(\*|_)([^\*\_]*?)(\1)/g,
-    link: /\[([^\]]*)]\(([^)]*)\)/g,
+    em: /(\*|_)([^\*\_]+?)(\1)/g,
+    strong: /((?:\*|_){2})([^\*\_]*?)(\1)/g,
+    // link: /\[([^\]]*)]\(([^)]*)\)/g,
+  }
+
+  const tokenize = (text) => {
+    const tokens = []
+    for (const type in RegexRules) {
+      if (RegexRules.hasOwnProperty(type)) {
+        const regex = RegexRules[type]
+        let m
+
+        while ((m = regex.exec(text)) !== null) {
+          const start = m.index
+          const end = start + m[0].length
+          tokens.push({ start, end, type })
+        }
+      }
+    }
+
+    return tokens
   }
 
   const decorate = useCallback(([node, path]) => {
@@ -85,19 +105,11 @@ const Home = () => {
       return ranges
     }
 
-    const regex = RegexRules.em
-    const tokens = []
-    let m
-    while ((m = regex.exec(node.text)) !== null) {
-      const start = m.index
-      const end = start + m[0].length
-      tokens.push({start, end })
-    }
-
+    const tokens = tokenize(node.text)
     //处理tokens
-    tokens.forEach(({start, end}) => {
+    tokens.forEach(({start, end, type}) => {
       ranges.push({
-        type: 'em',
+        type,
         anchor: { path, offset: start },
         focus: { path, offset: end },
       })
