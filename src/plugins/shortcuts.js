@@ -19,9 +19,10 @@ const withShortcuts = editor => {
 
   editor.insertText = text => {
     const { selection } = editor
+    const isCollapsed = selection && Range.isCollapsed(selection)
 
     //当text为空格并且selection存在，且selection为一个光标的时候
-    if (text === ' ' && selection && Range.isCollapsed(selection)) {
+    if (text === ' ' && isCollapsed) {
       //获取空格前面的内容
       const match = Editor.above(editor, {
         match: n => Editor.isBlock(editor, n),
@@ -68,6 +69,48 @@ const withShortcuts = editor => {
 
         return
       }
+    }
+
+    //判断是否输入链接
+    if ((text === '[' || text === ']' || text === '(' || text === ')' )&& isCollapsed) {
+      insertText(text)
+
+      console.log('检测是否输入link');
+
+      const leafText = Editor.leaf(editor, selection)[0].text
+      const path = Editor.path(editor, selection)
+
+      const link = /\[([^\]]*)]\(([^)]*)\)/g
+      const tokens = []
+
+      let m
+      while ((m = link.exec(leafText)) !== null) {
+        const start = m.index
+        const end = start + m[0].length
+        tokens.push({ start, end, match: m })
+      }
+
+      //处理tokens
+      tokens.forEach(({start, end, match}) => {
+        const text = match[1]
+        const url = match[2]
+        const range = {
+          anchor: { path, offset: start },
+          focus: { path, offset: end },
+        }
+
+        const link = {
+          type: 'link',
+          url,
+          children: [{ text }],
+        }
+
+        Transforms.select(editor, range)
+        Transforms.delete(editor)
+        Transforms.insertNodes(editor, link)
+      })
+
+      return
     }
 
     //否则执行默认插入
