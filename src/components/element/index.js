@@ -40,6 +40,10 @@ const Element = props => {
       return <li {...attributes}>{children}</li>
     case 'link':
       return <Link {...props} />
+    case 'strong':
+      return <Strong {...props} />
+    case 'em':
+      return <Em {...props} />
     default:
       return <Default {...props} isTypeTipOpen={isTypeTipOpen} />
   }
@@ -118,6 +122,30 @@ const Link = props => {
     <a {...attributes} href={url}>
       {children}
     </a>
+  )
+}
+
+const Strong = props => {
+  const { attributes, children } = props
+
+  return (
+    <span {...attributes}>
+      <strong>
+        {children}
+      </strong>
+    </span>
+  )
+}
+
+const Em = props => {
+  const { attributes, children } = props
+
+  return (
+    <span {...attributes}>
+      <em>
+        {children}
+      </em>
+    </span>
   )
 }
 

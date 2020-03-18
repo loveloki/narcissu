@@ -8,7 +8,14 @@ const withSpecial = editor => {
   }
 
   editor.isInline = element => {
-    return element.type === 'link' ? true : isInline(element)
+    switch (element.type) {
+      case 'link':
+      case 'em':
+      case 'strong':
+        return true
+      default:
+        return isInline(element)
+    }
   }
 
   return editor
