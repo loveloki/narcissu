@@ -41,7 +41,7 @@ const Element = props => {
     case 'link':
       return <Link {...props} />
     default:
-      return <LeafBlocks {...props} type={'p'} isTypeTipOpen={isTypeTipOpen} />
+      return <Default {...props} isTypeTipOpen={isTypeTipOpen} />
   }
 }
 
@@ -118,6 +118,18 @@ const Link = props => {
     <a {...attributes} href={url}>
       {children}
     </a>
+  )
+}
+
+const Default = props => {
+  const { attributes, children, isTypeTipOpen } = props
+  const focused = useFocused()
+  const selected = useSelected()
+
+  return (
+    <p data-tip={'p'} className={(isTypeTipOpen && focused && selected) ? 'tip' : ''} {...attributes}>
+      {children}
+    </p>
   )
 }
 
