@@ -75,8 +75,6 @@ const withShortcuts = editor => {
     if ((text === '[' || text === ']' || text === '(' || text === ')' )&& isCollapsed) {
       insertText(text)
 
-      console.log('检测是否输入link');
-
       const leafText = Editor.leaf(editor, selection)[0].text
       const path = Editor.path(editor, selection)
 
@@ -108,6 +106,61 @@ const withShortcuts = editor => {
         Transforms.select(editor, range)
         Transforms.delete(editor)
         Transforms.insertNodes(editor, link)
+      })
+
+      return
+    }
+
+    //判断是否为strong或em
+    if(isCollapsed && text === '*') {
+      insertText(text)
+
+      const leafText = Editor.leaf(editor, selection)[0].text
+      const path = Editor.path(editor, selection)
+
+      const RegexRules = {
+        strong: /((?:\*|_){2})([^*_]+?)(\1)/g,
+        em: /(\*|_)([^*_]+?)(\1)/g,
+      }
+
+      const tokenize = (text) => {
+        const tokens = []
+        for (const type in RegexRules) {
+          if (RegexRules.hasOwnProperty(type)) {
+            const regex = RegexRules[type]
+            let m
+
+            while ((m = regex.exec(text)) !== null) {
+              const start = m.index
+              const end = start + m[0].length
+              tokens.push({ start, end, type, match: m })
+            }
+          }
+        }
+
+        return tokens
+      }
+
+      const tokens = tokenize(leafText)
+
+      //处理tokens
+      tokens.forEach(({start, end, type, match}) => {
+        console.log(type, typeof type);
+
+        const text = match[2]
+        const range = {
+          anchor: { path, offset: start },
+          focus: { path, offset: end },
+        }
+
+        const node = {
+          type,
+          children: [{ text }],
+        }
+
+        Transforms.select(editor, range)
+        Transforms.delete(editor)
+        Transforms.insertNodes(editor, node)
       })
 
       return
