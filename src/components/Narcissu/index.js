@@ -12,7 +12,6 @@ import Settings from '../settings'
 
 import './index.css'
 import defaultConfig from '../../constants/config'
-import Leaf from '../leaf'
 
 const Home = () => {
   const [value, setValue] = useState(StorageManager.get('value') || [
@@ -23,7 +22,6 @@ const Home = () => {
   ])
 
   const renderElement = useCallback(props => <Element {...props} />, [])
-  const renderLeaf = useCallback(props => <Leaf {...props} />, [])
 
   const editor = useMemo(() => withPlugins(withReact(withHistory(createEditor()))), [])
 
@@ -70,7 +68,6 @@ const Home = () => {
     }
   }
 
-
   return (
     <>
       <div className={(() => {
@@ -97,7 +94,6 @@ const Home = () => {
           >
             <Editable
               renderElement={renderElement}
-              renderLeaf={renderLeaf}
             />
           </Slate>
         </main>
