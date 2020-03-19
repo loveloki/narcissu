@@ -1,9 +1,9 @@
 //处理返回不同元素
 import React from 'react'
 import './index.css'
-import { useSelected, useFocused } from 'slate-react'
+import { useSelected, useFocused, useEditor } from 'slate-react'
 import StorageManager from '../../constants/storage'
-import { Editor } from 'slate'
+import { Editor, Point, Transforms } from 'slate'
 
 const typeList = {
   'heading-one' : 'h1',
@@ -140,6 +140,14 @@ const Strong = props => {
 const Em = props => {
   const { attributes, children } = props
 
+  const selected = useSelected()
+  const focused = useFocused()
+
+  if (selected && focused) {
+    console.log('激活！解封！!!!!');
+
+  }
+
   return (
     <span {...attributes}>
       <em>
@@ -153,6 +161,109 @@ const Default = props => {
   const { attributes, children, isTypeTipOpen } = props
   const focused = useFocused()
   const selected = useSelected()
+  const editor = useEditor()
+  const { selection } = editor
+
+  const match = Editor.above(editor, {
+    match: n => Editor.isBlock(editor, n)
+  })
+
+  if (match && selection && focused && selected) {
+    const [, path] = match
+
+    const nodePositionInParent = () => {
+      //获取 parent 相关信息
+      const start_parent = Editor.start(editor, path)
+      const end_parent = Editor.end(editor, path)
+
+      //获得现在的 node 的相关信息,直接通过editor.selection
+      const path_current = Editor.path(editor, selection)
+      const start_current = Editor.start(editor, path_current)
+      const end_current = Editor.end(editor, path_current)
+
+      if (Point.equals(start_current, start_parent)) {
+        if (Point.equals(end_current, end_parent)) {
+          return 'only'
+        }
+        return 'first'
+      } else if (Point.equals(end_current, end_parent)) {
+        return 'end'
+      } else {
+        return 'inside'
+      }
+    }
+    const position = nodePositionInParent()
+    if (position === 'first') {
+      const next = Editor.next(editor)
+      const path = next[1]
+      const node = Editor.above(editor, {at: path})[0]
+      const isInline = Editor.isInline(editor, node)
+
+      if (isInline) {
+        const start_n = Editor.start(editor, path)
+        const path_c = Editor.path(editor, selection)
+        const point = Editor.point(editor, selection)
+        const end = Editor.end(editor, path_c)
+        const flag = Point.equals(end, point)
+
+        //移动光标到 inline 节点里面
+        flag && Transforms.select(editor, start_n)
+      }
+
+    } else if (position === 'end') {
+      const prev = Editor.previous(editor)
+      const path = prev[1]
+      const node = Editor.above(editor, {at: path})[0]
+      const isInline = Editor.isInline(editor, node)
+
+      if (isInline) {
+        const end_p = Editor.end(editor, path)
+        const path_c = Editor.path(editor, selection)
+        const point = Editor.point(editor, selection)
+        const start = Editor.start(editor, path_c)
+        const flag = Point.equals(start, point)
+
+        //移动光标到 inline 节点里面
+        flag && Transforms.select(editor, end_p)
+      }
+
+    } else if (position === 'inside') {
+      const prev = Editor.previous(editor)
+      const next = Editor.next(editor)
+
+      const path_p = prev[1]
+      const node_p = Editor.above(editor, {at: path_p})[0]
+      const isInline_p = Editor.isInline(editor, node_p)
+
+      const path_n = next[1]
+      const node_n = Editor.above(editor, {at: path_n})[0]
+      const isInline_n = Editor.isInline(editor, node_n)
+
+      if (isInline_p) {
+        const end_p = Editor.end(editor, path_p)
+        const path_c = Editor.path(editor, selection)
+        const point = Editor.point(editor, selection)
+        const start = Editor.start(editor, path_c)
+        const flag = Point.equals(start, point)
+
+        //移动光标到 inline 节点里面
+        flag && Transforms.select(editor, end_p)
+      }
+      if (isInline_n) {
+        const start_n = Editor.start(editor, path_n)
+        const path_c = Editor.path(editor, selection)
+        const point = Editor.point(editor, selection)
+        const end = Editor.end(editor, path_c)
+        const flag = Point.equals(end, point)
+
+        //移动光标到 inline 节点里面
+        flag && Transforms.select(editor, start_n)
+      }
+    }
+
+  }
+
+
 
   return (
     <p data-tip={'p'} className={(isTypeTipOpen && focused && selected) ? 'tip' : ''} {...attributes}>
