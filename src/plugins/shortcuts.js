@@ -153,9 +153,16 @@ const withShortcuts = editor => {
           focus: { path, offset: end },
         }
 
+        let children = []
+        if (type === 'em') {
+          children = [{text: '*', type: 'mark'}, { text }, {text: '*', type: 'mark'}]
+        } else if (type === 'strong') {
+          children = [{text: '**', type: 'mark'}, { text }, {text: '**', type: 'mark'}]
+        }
+
         const node = {
           type,
-          children: [{ text }],
+          children,
         }
 
         Transforms.select(editor, range)
