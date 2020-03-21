@@ -9,6 +9,7 @@ import Element from '../element'
 import StorageManager from '../../constants/storage'
 import withPlugins from '../../plugins'
 import Settings from '../settings'
+import Leaf from '../leaf'
 
 import './index.css'
 import defaultConfig from '../../constants/config'
@@ -22,6 +23,7 @@ const Home = () => {
   ])
 
   const renderElement = useCallback(props => <Element {...props} />, [])
+  const renderLeaf = useCallback(props => <Leaf {...props} />, [])
 
   const editor = useMemo(() => withPlugins(withReact(withHistory(createEditor()))), [])
 
@@ -94,6 +96,7 @@ const Home = () => {
           >
             <Editable
               renderElement={renderElement}
+              renderLeaf={renderLeaf}
             />
           </Slate>
         </main>
