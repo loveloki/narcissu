@@ -14,6 +14,87 @@ const SHORTCUTS = {
   '######': 'heading-six',
 }
 
+const RegexRules = {
+  strong: /((?:\*|_){2})([^*_]+?)(\1)/g,
+  em: /(\*|_)([^*_]+?)(\1)/g,
+}
+
+/**
+ * @description: 根据text返回处理过的token数组
+ * @description: token格式为：{type:: string, content:: array}
+ * @description: content里面是object的数组, 其中标点符号{type: punctuation}, 普通文本{type: text}
+ * @param {string}
+ * @return: {array} [token1, token2, ...]
+ */
+const tokenize = (text) => {
+  let tokens = [text]
+
+  for (const type in RegexRules) {
+    if (RegexRules.hasOwnProperty(type)) {
+      const regex = RegexRules[type]
+
+      for (let i = 0; i < tokens.length; i++) {
+        let text = tokens[i]
+
+        if (typeof text !== 'string') {
+          continue
+        }
+
+        let start = 0
+        let list = []
+
+        //因为可能上一次匹配成功，所以手动重置lastIndex
+        regex.lastIndex = 0
+        let m = regex.exec(text)
+
+        if (m !== null) {
+          const from = m.index
+          const to = from + m[0].length
+          const before = text.slice(start, from)
+          const after = text.slice(to)
+
+          const getToken = (match, type) => {
+            const token = {
+              type,
+            }
+
+            if (type === 'em') {
+              const content = [
+                {type: 'punctuation', text: '*'},
+                {type: 'text', text: match[2]},
+                {type: 'punctuation', text: '*'},
+              ]
+
+              token.content = content
+            } else if (type === 'strong') {
+              const content = [
+                {type: 'punctuation', text: '**'},
+                {type: 'text', text: match[2]},
+                {type: 'punctuation', text: '**'},
+              ]
+
+              token.content = content
+            }
+
+            return token
+          }
+
+          const token = getToken(m, type)
+
+          before && list.push(before)
+          list.push(token)
+          after && list.push(after)
+          //替换原来的数据
+          tokens.splice(i, 1, ...list)
+        }
+      }
+
+    }
+  }
+
+  return tokens
+}
+
 const withShortcuts = editor => {
   const { insertText, insertBreak } = editor
 
@@ -111,64 +192,53 @@ const withShortcuts = editor => {
       return
     }
 
-    //判断是否为strong或em
-    if(isCollapsed && text === '*') {
+    if (text === '*' && isCollapsed) {
       insertText(text)
 
-      const leafText = Editor.leaf(editor, selection)[0].text
-      const path = Editor.path(editor, selection)
+      //获取整个paragraph的text
+      const match = Editor.above(editor, {
+        match: n => Editor.isBlock(editor, n),
+      })
 
-      const RegexRules = {
-        strong: /((?:\*|_){2})([^*_]+?)(\1)/g,
-        em: /(\*|_)([^*_]+?)(\1)/g,
-      }
+      if (match) {
+        const [, paragraphPath] = match
+        const paragraphText = Editor.string(editor, paragraphPath)
 
-      const tokenize = (text) => {
-        const tokens = []
-        for (const type in RegexRules) {
-          if (RegexRules.hasOwnProperty(type)) {
-            const regex = RegexRules[type]
-            let m
+        const tokens = tokenize(paragraphText)
+        //处理tokens
+        const newParagraph = {
+          type: 'paragraph',
+          children: [],
+        }
 
-            while ((m = regex.exec(text)) !== null) {
-              const start = m.index
-              const end = start + m[0].length
-              tokens.push({ start, end, type, match: m })
-            }
+        for (const token of tokens) {
+          if (typeof token !== 'string') {
+            const { type, content } = token
+            newParagraph.children.push({type, children: content})
+          } else {
+            newParagraph.children.push({text: token})
           }
         }
 
-        return tokens
+        //删除paragraph
+        Transforms.removeNodes(editor)
+
+        //然后...构建新的node, 插入
+        Transforms.insertNodes(editor, newParagraph)
+
+        //然后 移动selection
+        const p = Editor.parent(editor, selection)
+        const n = Editor.node(editor, selection)
+        const next = Editor.after(editor, selection)
+        console.log(Editor.isInline(p), n[0].type);
+        // if (n[0].type === 'punctuation') {
+        //   return
+        // }
+
+        Transforms.setSelection(editor, selection)
+        Transforms.move(editor)
+
       }
-
-      const tokens = tokenize(leafText)
-
-      //处理tokens
-      tokens.forEach(({start, end, type, match}) => {
-        console.log(type, typeof type);
-
-        const text = match[2]
-        const range = {
-          anchor: { path, offset: start },
-          focus: { path, offset: end },
-        }
-
-        let children = []
-        if (type === 'em') {
-          children = [{text: '*', type: 'mark'}, { text }, {text: '*', type: 'mark'}]
-        } else if (type === 'strong') {
-          children = [{text: '**', type: 'mark'}, { text }, {text: '**', type: 'mark'}]
-        }
-
-        const node = {
-          type,
-          children,
-        }
-
-        Transforms.select(editor, range)
-        Transforms.delete(editor)
-        Transforms.insertNodes(editor, node)
-      })
 
       return
     }

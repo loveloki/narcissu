@@ -157,10 +157,7 @@ const Default = props => {
   })
 
   if (match && selection && focused && selected) {
-    const [node, path] = match
-
-    console.log(node);
-
+    const [, path] = match
 
     const nodePositionInParent = () => {
       //获取 parent 相关信息

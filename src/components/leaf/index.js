@@ -6,14 +6,14 @@ const Leaf = props => {
   const selected = useSelected()
   const focused = useFocused()
 
-  const isMark = leaf.type === 'mark'
+  const isPunctuation = leaf.type === 'punctuation'
   const isActive = selected && focused
 
   return (
     <span
       style={{
-        display: isMark && (isActive ? 'inline' : 'none'),
-        color: isMark && (isActive ? '#f00' : '#000'),
+        display: isPunctuation && (isActive ? 'inline' : 'none'),
+        color: isPunctuation && (isActive ? '#f00' : '#000'),
       }}
       {...attributes}
     >
