@@ -4,6 +4,7 @@ import './index.css'
 import { useSelected, useFocused, useEditor } from 'slate-react'
 import StorageManager from '../../constants/storage'
 import { Editor, Point, Transforms } from 'slate'
+import { useEffect } from 'react'
 
 const typeList = {
   'heading-one' : 'h1',
@@ -113,11 +114,6 @@ const Link = props => {
   const { element,  attributes, children } = props
   const { url } = element
 
-  const isLinkActive = editor => {
-    const [link] = Editor.nodes(editor, { match: n => n.type === 'link' })
-    return !!link
-  }
-
   return (
     <a {...attributes} href={url}>
       {children}
@@ -140,14 +136,6 @@ const Strong = props => {
 const Em = props => {
   const { attributes, children } = props
 
-  const selected = useSelected()
-  const focused = useFocused()
-
-  if (selected && focused) {
-    console.log('激活！解封！!!!!');
-
-  }
-
   return (
     <span {...attributes}>
       <em>
@@ -169,7 +157,10 @@ const Default = props => {
   })
 
   if (match && selection && focused && selected) {
-    const [, path] = match
+    const [node, path] = match
+
+    console.log(node);
+
 
     const nodePositionInParent = () => {
       //获取 parent 相关信息
