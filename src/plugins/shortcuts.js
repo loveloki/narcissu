@@ -1,5 +1,6 @@
 //输入空格后是否把节点从默认的paragraph转换为相应的节点
 import { Editor, Transforms, Range } from 'slate'
+import { PathHelper, EditorHelper } from '../constants/helper'
 
 const SHORTCUTS = {
   '*': 'list-item',
@@ -108,52 +109,25 @@ const tokenize = (text) => {
   return tokens
 }
 
-const dealWithRegex = (editor) => {
-  const { selection } = editor
-  //获取整个paragraph的text
-  const match = Editor.above(editor, {
-    match: n => Editor.isBlock(editor, n),
-  })
+const dealWithRegex = (text) => {
+  const tokens = tokenize(text)
+  //处理tokens
+  const node = {
+    type: 'paragraph',
+    children: [],
+  }
 
-  if (match) {
-    const [, paragraphPath] = match
-    const paragraphText = Editor.string(editor, paragraphPath)
-
-    const tokens = tokenize(paragraphText)
-    //处理tokens
-    const newParagraph = {
-      type: 'paragraph',
-      children: [],
-    }
-
-    for (const token of tokens) {
-      if (typeof token !== 'string') {
-        const { content, ...rest } = token
-        newParagraph.children.push({children: content, ...rest})
-      } else {
-        newParagraph.children.push({text: token})
-      }
-    }
-
-    //删除paragraph
-    Transforms.removeNodes(editor)
-
-    //然后...构建新的node, 插入
-    Transforms.insertNodes(editor, newParagraph)
-
-
-    //然后 移动selection
-    //TODO: 有bug，待修复
-    const parent = Editor.above(editor, {
-      match: n => Editor.isBlock(editor, n)
-    })
-
-    if (parent[0].type === 'paragraph') {
-      Transforms.select(editor, selection)
+  for (const token of tokens) {
+    if (typeof token !== 'string') {
+      const { content, ...rest } = token
+      node.children.push({children: content, ...rest})
+    } else {
+      node.children.push({text: token})
     }
   }
-}
 
+  return node
+}
 
 const withShortcuts = editor => {
   const { insertText, insertBreak } = editor
@@ -213,9 +187,33 @@ const withShortcuts = editor => {
       }
     }
 
+    //进行regex相关处理
     if (text && isCollapsed) {
       insertText(text)
-      dealWithRegex(editor)
+
+      //获取整个paragraph的text
+      const match = Editor.above(editor, {
+        match: n => Editor.isBlock(editor, n),
+      })
+
+      if (match) {
+        const [, paragraphPath] = match
+        const paragraphText = Editor.string(editor, paragraphPath)
+
+        const offset = EditorHelper.findOffset(editor, selection)
+        const newParagraph = dealWithRegex(paragraphText)
+
+        //删除paragraph
+        Transforms.removeNodes(editor)
+
+        //然后...构建新的node, 插入
+        Transforms.insertNodes(editor, newParagraph)
+
+        //然后 移动selection
+        const point = EditorHelper.findPoint(editor, offset)
+        Transforms.select(editor, point)
+      }
+
       return
     }
 
