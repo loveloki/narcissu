@@ -15,6 +15,7 @@ const SHORTCUTS = {
 }
 
 const RegexRules = {
+  link: /\[([^\]]*)]\(([^)]*)\)/g,
   strong: /((?:\*|_){2})([^*_]+?)(\1)/g,
   em: /(\*|_)([^*_]+?)(\1)/g,
 }
@@ -74,6 +75,18 @@ const tokenize = (text) => {
               ]
 
               token.content = content
+            } else if (type === 'link') {
+              const content = [
+                {type: 'punctuation', text: '['},
+                {type: 'text', text: match[1]},
+                {type: 'punctuation', text: ']'},
+                {type: 'punctuation', text: '('},
+                {type: 'punctuation', text: match[2]},
+                {type: 'punctuation', text: ')'},
+              ]
+
+              token.url = match[2]
+              token.content = content
             }
 
             return token
@@ -115,8 +128,8 @@ const dealWithRegex = (editor) => {
 
     for (const token of tokens) {
       if (typeof token !== 'string') {
-        const { type, content } = token
-        newParagraph.children.push({type, children: content})
+        const { content, ...rest } = token
+        newParagraph.children.push({children: content, ...rest})
       } else {
         newParagraph.children.push({text: token})
       }
@@ -131,10 +144,11 @@ const dealWithRegex = (editor) => {
 
     //然后 移动selection
     //TODO: 有bug，待修复
-    const parent = Editor.node(editor, {
+    const parent = Editor.above(editor, {
       match: n => Editor.isBlock(editor, n)
     })
-    if (parent.type === 'paragraph') {
+
+    if (parent[0].type === 'paragraph') {
       Transforms.select(editor, selection)
     }
   }
@@ -197,46 +211,6 @@ const withShortcuts = editor => {
 
         return
       }
-    }
-
-    //判断是否输入链接
-    if ((text === '[' || text === ']' || text === '(' || text === ')' )&& isCollapsed) {
-      insertText(text)
-
-      const leafText = Editor.leaf(editor, selection)[0].text
-      const path = Editor.path(editor, selection)
-
-      const link = /\[([^\]]*)]\(([^)]*)\)/g
-      const tokens = []
-
-      let m
-      while ((m = link.exec(leafText)) !== null) {
-        const start = m.index
-        const end = start + m[0].length
-        tokens.push({ start, end, match: m })
-      }
-
-      //处理tokens
-      tokens.forEach(({start, end, match}) => {
-        const text = match[1]
-        const url = match[2]
-        const range = {
-          anchor: { path, offset: start },
-          focus: { path, offset: end },
-        }
-
-        const link = {
-          type: 'link',
-          url,
-          children: [{ text }],
-        }
-
-        Transforms.select(editor, range)
-        Transforms.delete(editor)
-        Transforms.insertNodes(editor, link)
-      })
-
-      return
     }
 
     if (text && isCollapsed) {
