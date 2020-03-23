@@ -95,11 +95,58 @@ const tokenize = (text) => {
   return tokens
 }
 
+const dealWithRegex = (editor) => {
+  const { selection } = editor
+  //获取整个paragraph的text
+  const match = Editor.above(editor, {
+    match: n => Editor.isBlock(editor, n),
+  })
+
+  if (match) {
+    const [, paragraphPath] = match
+    const paragraphText = Editor.string(editor, paragraphPath)
+
+    const tokens = tokenize(paragraphText)
+    //处理tokens
+    const newParagraph = {
+      type: 'paragraph',
+      children: [],
+    }
+
+    for (const token of tokens) {
+      if (typeof token !== 'string') {
+        const { type, content } = token
+        newParagraph.children.push({type, children: content})
+      } else {
+        newParagraph.children.push({text: token})
+      }
+    }
+
+    //删除paragraph
+    Transforms.removeNodes(editor)
+
+    //然后...构建新的node, 插入
+    Transforms.insertNodes(editor, newParagraph)
+
+
+    //然后 移动selection
+    //TODO: 有bug，待修复
+    const parent = Editor.node(editor, {
+      match: n => Editor.isBlock(editor, n)
+    })
+    if (parent.type === 'paragraph') {
+      Transforms.select(editor, selection)
+    }
+  }
+}
+
+
 const withShortcuts = editor => {
   const { insertText, insertBreak } = editor
 
   editor.insertText = text => {
     const { selection } = editor
+
     const isCollapsed = selection && Range.isCollapsed(selection)
 
     //当text为空格并且selection存在，且selection为一个光标的时候
@@ -192,54 +239,9 @@ const withShortcuts = editor => {
       return
     }
 
-    if (text === '*' && isCollapsed) {
+    if (text && isCollapsed) {
       insertText(text)
-
-      //获取整个paragraph的text
-      const match = Editor.above(editor, {
-        match: n => Editor.isBlock(editor, n),
-      })
-
-      if (match) {
-        const [, paragraphPath] = match
-        const paragraphText = Editor.string(editor, paragraphPath)
-
-        const tokens = tokenize(paragraphText)
-        //处理tokens
-        const newParagraph = {
-          type: 'paragraph',
-          children: [],
-        }
-
-        for (const token of tokens) {
-          if (typeof token !== 'string') {
-            const { type, content } = token
-            newParagraph.children.push({type, children: content})
-          } else {
-            newParagraph.children.push({text: token})
-          }
-        }
-
-        //删除paragraph
-        Transforms.removeNodes(editor)
-
-        //然后...构建新的node, 插入
-        Transforms.insertNodes(editor, newParagraph)
-
-        //然后 移动selection
-        const p = Editor.parent(editor, selection)
-        const n = Editor.node(editor, selection)
-        const next = Editor.after(editor, selection)
-        console.log(Editor.isInline(p), n[0].type);
-        // if (n[0].type === 'punctuation') {
-        //   return
-        // }
-
-        Transforms.setSelection(editor, selection)
-        Transforms.move(editor)
-
-      }
-
+      dealWithRegex(editor)
       return
     }
 
