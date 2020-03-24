@@ -188,7 +188,7 @@ const withShortcuts = editor => {
     }
 
     //进行regex相关处理
-    if (text && isCollapsed) {
+    if (text && selection) {
       insertText(text)
 
       //获取整个paragraph的text
@@ -307,6 +307,7 @@ const withShortcuts = editor => {
 
     return
   }
+  
   editor.deleteBackward = (...args) => {
     deleteBackward(...args)
 
