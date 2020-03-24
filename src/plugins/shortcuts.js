@@ -130,7 +130,7 @@ const dealWithRegex = (text) => {
 }
 
 const withShortcuts = editor => {
-  const { insertText, insertBreak, deleteBackward, deleteForward } = editor
+  const { insertText, insertBreak, deleteBackward, deleteForward, deleteFragment } = editor
 
   editor.insertText = text => {
     const { selection } = editor
@@ -307,9 +307,41 @@ const withShortcuts = editor => {
 
     return
   }
-  
+
   editor.deleteBackward = (...args) => {
     deleteBackward(...args)
+
+    const { selection } = editor
+
+    //获取整个paragraph的text
+    const match = Editor.above(editor, {
+      match: n => Editor.isBlock(editor, n),
+    })
+
+    if (match) {
+      const [, paragraphPath] = match
+      const paragraphText = Editor.string(editor, paragraphPath)
+
+      const offset = EditorHelper.findOffset(editor, selection) - 1
+      const newParagraph = dealWithRegex(paragraphText)
+
+      //删除paragraph
+      Transforms.removeNodes(editor)
+
+      //然后...构建新的node, 插入
+      Transforms.insertNodes(editor, newParagraph)
+
+      //然后 移动selection
+      const point = EditorHelper.findPoint(editor, offset)
+
+      Transforms.select(editor, point)
+    }
+
+    return
+  }
+
+  editor.deleteFragment = (...args) => {
+    deleteFragment(...args)
 
     const { selection } = editor
 
