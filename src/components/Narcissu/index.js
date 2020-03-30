@@ -15,12 +15,7 @@ import './index.css'
 import defaultConfig from '../../constants/config'
 
 const Home = () => {
-  const [value, setValue] = useState(StorageManager.get('value') || [
-    {
-      type: 'paragraph',
-      children: [{ text: '随意输入。。。' }],
-    },
-  ])
+  const [value, setValue] = useState(StorageManager.get('value') || defaultValue)
 
   const renderElement = useCallback(props => <Element {...props} />, [])
   const renderLeaf = useCallback(props => <Leaf {...props} />, [])
@@ -120,5 +115,20 @@ const Narcissu = () => {
     </Router>
   )
 }
+
+const defaultValue = [
+  { type: 'paragraph', children: [{ text: 'This is a Markdown editor.' }]},
+  { type: 'paragraph', children: [{ text: '支持' }, { type: 'em', children: [ {type: 'punctuation', text: '*'}, {type: 'text', text: '倾斜'}, {type: 'punctuation', text: '*'},]}]},
+  { type: 'paragraph', children: [{ text: '支持' }, { type: 'strong', children: [ {type: 'punctuation', text: '**'}, {type: 'text', text: '强调'}, {type: 'punctuation', text: '**'},]}]},
+  { type: 'paragraph', children: [{ text: '支持' }, { type: 'link', url: 'https://bing.com', children: [ {type: 'punctuation', text: '['}, {type: 'text', text: '链接'}, {type: 'punctuation', text: ']'},{type: 'punctuation', text: '('}, {type: 'punctuation', text: 'https://bing.com'}, {type: 'punctuation', text: ')'},]}]},
+  { type: 'paragraph', children: [{ text: '支持' }, { type: 'image-box', children: [ {type: 'punctuation', text: '!'}, {type: 'punctuation', text: '['}, {type: 'text', text: '图片'}, {type: 'punctuation', text: ']'},{type: 'punctuation', text: '('}, {type: 'punctuation', text: 'https://fakeimg.pl/100/'}, {type: 'punctuation', text: ')'}, {type: 'image', url: 'https://fakeimg.pl/100/', children: [{ text: '' }]}]}]},
+  { type: 'paragraph', children: [{ text: '还有。。。' }]},
+  { type: 'heading-one', children: [{ text: '标题h1~h6' }]},
+  { type: 'paragraph', children: [{ text: '强制换行' }]},
+  { type: 'thematic-break', children: [{ text: '******' }]},
+  { type: 'fenced-code-blocks', children: [{ text: '围栏代码块' }]},
+  { type: 'block-quote', children: [{ text: '引用' }]},
+  { type: 'bulleted-list', children: [{ type: 'list-item', children: [{ text: '列表' }]},]},
+]
 
 export default Narcissu
