@@ -44,8 +44,8 @@ const Element = props => {
       return <Strong {...props} />
     case 'em':
       return <Em {...props} />
-    case 'span':
-      return <Span {...props} />
+    case 'image-box':
+      return <ImageBox {...props} />
     case 'image':
       return <Image {...props} />
     default:
@@ -147,7 +147,7 @@ const Em = props => {
     </span>
   )
 }
-const Span = props => {
+const ImageBox = props => {
   const { attributes, children } = props
 
   return (

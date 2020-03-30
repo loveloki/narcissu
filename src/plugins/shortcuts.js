@@ -101,7 +101,7 @@ const tokenize = (text) => {
                 { type: 'image', url: match[2],  children: [{ text: 'i' }] },
               ]
 
-              token.type = 'span'
+              token.type = 'image-box'
               token.content = content
             }
 
