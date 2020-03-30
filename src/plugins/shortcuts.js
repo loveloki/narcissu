@@ -16,6 +16,7 @@ const SHORTCUTS = {
 }
 
 const RegexRules = {
+  image: /!\[([^\]]*)]\(([^)]*)\)/g,
   link: /\[([^\]]*)]\(([^)]*)\)/g,
   strong: /((?:\*|_){2})([^*_]+?)(\1)/g,
   em: /(\*|_)([^*_]+?)(\1)/g,
@@ -87,6 +88,20 @@ const tokenize = (text) => {
               ]
 
               token.url = match[2]
+              token.content = content
+            } else if (type === 'image') {
+              const content = [
+                {type: 'punctuation', text: '!'},
+                {type: 'punctuation', text: '['},
+                {type: 'text', text: match[1]},
+                {type: 'punctuation', text: ']'},
+                {type: 'punctuation', text: '('},
+                {type: 'punctuation', text: match[2]},
+                {type: 'punctuation', text: ')'},
+                { type: 'image', url: match[2],  children: [{ text: 'i' }] },
+              ]
+
+              token.type = 'span'
               token.content = content
             }
 

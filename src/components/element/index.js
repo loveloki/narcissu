@@ -4,7 +4,6 @@ import './index.css'
 import { useSelected, useFocused, useEditor } from 'slate-react'
 import StorageManager from '../../constants/storage'
 import { Editor, Point, Transforms } from 'slate'
-import { useEffect } from 'react'
 
 const typeList = {
   'heading-one' : 'h1',
@@ -45,6 +44,10 @@ const Element = props => {
       return <Strong {...props} />
     case 'em':
       return <Em {...props} />
+    case 'span':
+      return <Span {...props} />
+    case 'image':
+      return <Image {...props} />
     default:
       return <Default {...props} isTypeTipOpen={isTypeTipOpen} />
   }
@@ -141,6 +144,35 @@ const Em = props => {
       <em>
         {children}
       </em>
+    </span>
+  )
+}
+const Span = props => {
+  const { attributes, children } = props
+
+  return (
+    <span {...attributes}>
+        {children}
+    </span>
+  )
+}
+
+const Image = props => {
+  const { attributes, children, element } = props
+  const { url } = element
+  const selected = useSelected()
+  const focused = useFocused()
+
+  return (
+    <span {...attributes}>
+      <img src={url}
+        contentEditable={false}
+        alt="img"
+        style={{
+          boxShadow: (focused && selected) ? '0 0 0 3px #B4D5FF' : 'none',
+        }}
+      />
+      {children}
     </span>
   )
 }

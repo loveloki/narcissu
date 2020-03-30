@@ -4,11 +4,19 @@ const withSpecial = editor => {
   const { isVoid, isInline } = editor
 
   editor.isVoid = element => {
-    return element.type === 'thematic-break' ? true : isVoid(editor)
+    switch (element.type) {
+      case 'image':
+      case 'thematic-break':
+        return true
+      default:
+        return isVoid(editor)
+    }
   }
 
   editor.isInline = element => {
     switch (element.type) {
+      case 'span':
+      case 'image':
       case 'link':
       case 'em':
       case 'strong':
