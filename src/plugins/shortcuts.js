@@ -99,7 +99,7 @@ const tokenize = (text) => {
                 {type: 'punctuation', text: '('},
                 {type: 'punctuation', text: match[2]},
                 {type: 'punctuation', text: ')'},
-                { type: 'image', url: match[2],  children: [{ text: 'i' }] },
+                { type: 'image', url: match[2],  children: [{ text: '' }] },
               ]
 
               token.type = 'image-box'
@@ -159,6 +159,13 @@ const withShortcuts = editor => {
 
   editor.insertText = text => {
     const { selection } = editor
+
+    const match = Editor.above(editor, {
+      match: n => Editor.isBlock(editor, n),
+    })
+
+    console.log('insertText', match[0])
+
 
     const isCollapsed = selection && Range.isCollapsed(selection)
 
@@ -222,11 +229,21 @@ const withShortcuts = editor => {
       })
 
       if (match) {
+        if (match[0].type !== 'paragraph') {
+          return
+        }
+
         const [, paragraphPath] = match
         const paragraphText = Editor.string(editor, paragraphPath)
 
         const offset = EditorHelper.findOffset(editor, selection)
         const newParagraph = dealWithRegex(paragraphText)
+
+
+        const child = newParagraph.children
+        if (child.length === 1) {
+          return
+        }
 
         //删除paragraph
         Transforms.removeNodes(editor)
@@ -303,6 +320,8 @@ const withShortcuts = editor => {
 
   editor.deleteForward = (...args) => {
     deleteForward(...args)
+    console.log('deleteForward')
+
 
     const { selection } = editor
 
@@ -312,6 +331,10 @@ const withShortcuts = editor => {
     })
 
     if (match) {
+      if (match[0].type !== 'paragraph') {
+        return
+      }
+
       const [, paragraphPath] = match
       const paragraphText = Editor.string(editor, paragraphPath)
 
@@ -335,6 +358,7 @@ const withShortcuts = editor => {
 
   editor.deleteBackward = (...args) => {
     deleteBackward(...args)
+    console.log('delateBackward')
 
     const { selection } = editor
 
@@ -344,6 +368,10 @@ const withShortcuts = editor => {
     })
 
     if (match) {
+      if (match[0].type !== 'paragraph') {
+        return
+      }
+
       const [, paragraphPath] = match
       const paragraphText = Editor.string(editor, paragraphPath)
 
@@ -367,6 +395,8 @@ const withShortcuts = editor => {
 
   editor.deleteFragment = (...args) => {
     deleteFragment(...args)
+    console.log('deleteFragment')
+
 
     const { selection } = editor
 
@@ -376,6 +406,10 @@ const withShortcuts = editor => {
     })
 
     if (match) {
+      if (match[0].type !== 'paragraph') {
+        return
+      }
+      
       const [, paragraphPath] = match
       const paragraphText = Editor.string(editor, paragraphPath)
 
