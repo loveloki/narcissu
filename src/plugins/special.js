@@ -18,6 +18,7 @@ const withSpecial = editor => {
       case 'image-box':
       case 'image':
       case 'link':
+      case 'code':
       case 'em':
       case 'strong':
         return true

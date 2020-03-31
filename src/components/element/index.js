@@ -40,6 +40,8 @@ const Element = props => {
       return <li {...attributes}>{children}</li>
     case 'link':
       return <Link {...props} />
+    case 'code':
+      return <Code {...props} />
     case 'strong':
       return <Strong {...props} />
     case 'em':
@@ -124,6 +126,15 @@ const Link = props => {
   )
 }
 
+const Code = props => {
+  const { attributes, children } = props
+
+  return (
+    <code {...attributes}>
+        {children}
+    </code>
+  )
+}
 const Strong = props => {
   const { attributes, children } = props
 
