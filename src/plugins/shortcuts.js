@@ -160,13 +160,6 @@ const withShortcuts = editor => {
   editor.insertText = text => {
     const { selection } = editor
 
-    const match = Editor.above(editor, {
-      match: n => Editor.isBlock(editor, n),
-    })
-
-    console.log('insertText', match[0])
-
-
     const isCollapsed = selection && Range.isCollapsed(selection)
 
     //当text为空格并且selection存在，且selection为一个光标的时候
@@ -409,7 +402,7 @@ const withShortcuts = editor => {
       if (match[0].type !== 'paragraph') {
         return
       }
-      
+
       const [, paragraphPath] = match
       const paragraphText = Editor.string(editor, paragraphPath)
 

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react'
 import { Slate, Editable, withReact } from 'slate-react'
-import { createEditor } from 'slate'
+import { createEditor, Transforms } from 'slate'
 import { withHistory } from 'slate-history'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 
@@ -65,6 +65,14 @@ const Home = () => {
     }
   }
 
+  const onKeyDown = e => {
+    if (e.key === 'Enter' && e.shiftKey) {
+      e.preventDefault()
+
+      Transforms.insertText(editor, '\n')
+    }
+  }
+
   return (
     <>
       <div className={(() => {
@@ -92,6 +100,7 @@ const Home = () => {
             <Editable
               renderElement={renderElement}
               renderLeaf={renderLeaf}
+              onKeyDown={onKeyDown}
             />
           </Slate>
         </main>
