@@ -37,7 +37,7 @@ const Element = props => {
     case 'bulleted-list':
       return <ul data-tip={'ul'} className={(isTypeTipOpen && focused && selected) ? 'tip' : ''} {...attributes}>{children}</ul>
     case 'list-item':
-      return <li {...attributes}>{children}</li>
+      return <li {...attributes}><p>{children}</p></li>
     case 'link':
       return <Link {...props} />
     case 'code':
