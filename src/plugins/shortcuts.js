@@ -238,11 +238,12 @@ const withShortcuts = editor => {
           return
         }
 
-        //删除paragraph
-        Transforms.removeNodes(editor)
-
+        //删除paragraph内容
+        const range = Editor.range(editor, paragraphPath)
+        Transforms.select(editor, range)
+        Transforms.delete(editor)
         //然后...构建新的node, 插入
-        Transforms.insertNodes(editor, newParagraph)
+        Transforms.insertFragment(editor, [newParagraph])
 
         //然后 移动selection
         const point = EditorHelper.findPoint(editor, offset)
@@ -315,7 +316,6 @@ const withShortcuts = editor => {
     deleteForward(...args)
     console.log('deleteForward')
 
-
     const { selection } = editor
 
     //获取整个paragraph的text
@@ -334,11 +334,12 @@ const withShortcuts = editor => {
       const offset = EditorHelper.findOffset(editor, selection) - 1
       const newParagraph = dealWithRegex(paragraphText)
 
-      //删除paragraph
-      Transforms.removeNodes(editor)
-
+      //删除paragraph内容
+      const range = Editor.range(editor, paragraphPath)
+      Transforms.select(editor, range)
+      Transforms.delete(editor)
       //然后...构建新的node, 插入
-      Transforms.insertNodes(editor, newParagraph)
+      Transforms.insertFragment(editor, [newParagraph])
 
       //然后 移动selection
       const point = EditorHelper.findPoint(editor, offset)
@@ -371,11 +372,12 @@ const withShortcuts = editor => {
       const offset = EditorHelper.findOffset(editor, selection) - 1
       const newParagraph = dealWithRegex(paragraphText)
 
-      //删除paragraph
-      Transforms.removeNodes(editor)
-
+      //删除paragraph内容
+      const range = Editor.range(editor, paragraphPath)
+      Transforms.select(editor, range)
+      Transforms.delete(editor)
       //然后...构建新的node, 插入
-      Transforms.insertNodes(editor, newParagraph)
+      Transforms.insertFragment(editor, [newParagraph])
 
       //然后 移动selection
       const point = EditorHelper.findPoint(editor, offset)
@@ -409,11 +411,12 @@ const withShortcuts = editor => {
       const offset = EditorHelper.findOffset(editor, selection) - 1
       const newParagraph = dealWithRegex(paragraphText)
 
-      //删除paragraph
-      Transforms.removeNodes(editor)
-
+      //删除paragraph内容
+      const range = Editor.range(editor, paragraphPath)
+      Transforms.select(editor, range)
+      Transforms.delete(editor)
       //然后...构建新的node, 插入
-      Transforms.insertNodes(editor, newParagraph)
+      Transforms.insertFragment(editor, [newParagraph])
 
       //然后 移动selection
       const point = EditorHelper.findPoint(editor, offset)
