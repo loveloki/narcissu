@@ -154,6 +154,59 @@ const dealWithRegex = (text) => {
   return node
 }
 
+const deleteParagraph = editor => {
+  const { selection } = editor
+  //获取整个paragraph的text
+  const match = Editor.above(editor, {
+    match: n => Editor.isBlock(editor, n),
+  })
+
+  if (match) {
+    if (match[0].type !== 'paragraph') {
+      return
+    }
+
+    const [, paragraphPath] = match
+    const paragraphText = Editor.string(editor, paragraphPath)
+
+    const offset = EditorHelper.findOffset(editor, selection) - 1
+    const newParagraph = dealWithRegex(paragraphText)
+
+    const child = newParagraph.children
+    if (child.length === 1) {
+      return
+    }
+
+    //因为如果inline，void在最后一个，会无法删除，所以先找到这种节点删除
+    const images = Array.from(
+      Editor.nodes(editor, {
+        at: paragraphPath,
+        match: n => n.type === 'image'
+      })
+    )
+
+    if (!!images.length) {
+      const [, cellPath] = images[images.length - 1]
+
+      Transforms.delete(editor, {
+        at: cellPath,
+        voids: true
+      })
+    }
+
+    //然后删除其他paragraph内容
+    const range = Editor.range(editor, paragraphPath)
+    Transforms.select(editor, range)
+    Transforms.delete(editor)
+    //然后...构建新的node, 插入
+    Transforms.insertFragment(editor, [newParagraph])
+
+    //然后 移动selection
+    const point = EditorHelper.findPoint(editor, offset)
+    Transforms.select(editor, point)
+  }
+}
+
 const withShortcuts = editor => {
   const { insertText, insertBreak, deleteBackward, deleteForward, deleteFragment } = editor
 
@@ -216,39 +269,7 @@ const withShortcuts = editor => {
     if (text && selection) {
       insertText(text)
 
-      //获取整个paragraph的text
-      const match = Editor.above(editor, {
-        match: n => Editor.isBlock(editor, n),
-      })
-
-      if (match) {
-        if (match[0].type !== 'paragraph') {
-          return
-        }
-
-        const [, paragraphPath] = match
-        const paragraphText = Editor.string(editor, paragraphPath)
-
-        const offset = EditorHelper.findOffset(editor, selection)
-        const newParagraph = dealWithRegex(paragraphText)
-
-
-        const child = newParagraph.children
-        if (child.length === 1) {
-          return
-        }
-
-        //删除paragraph内容
-        const range = Editor.range(editor, paragraphPath)
-        Transforms.select(editor, range)
-        Transforms.delete(editor)
-        //然后...构建新的node, 插入
-        Transforms.insertFragment(editor, [newParagraph])
-
-        //然后 移动selection
-        const point = EditorHelper.findPoint(editor, offset)
-        Transforms.select(editor, point)
-      }
+      deleteParagraph(editor)
 
       return
     }
@@ -316,36 +337,7 @@ const withShortcuts = editor => {
     deleteForward(...args)
     console.log('deleteForward')
 
-    const { selection } = editor
-
-    //获取整个paragraph的text
-    const match = Editor.above(editor, {
-      match: n => Editor.isBlock(editor, n),
-    })
-
-    if (match) {
-      if (match[0].type !== 'paragraph') {
-        return
-      }
-
-      const [, paragraphPath] = match
-      const paragraphText = Editor.string(editor, paragraphPath)
-
-      const offset = EditorHelper.findOffset(editor, selection) - 1
-      const newParagraph = dealWithRegex(paragraphText)
-
-      //删除paragraph内容
-      const range = Editor.range(editor, paragraphPath)
-      Transforms.select(editor, range)
-      Transforms.delete(editor)
-      //然后...构建新的node, 插入
-      Transforms.insertFragment(editor, [newParagraph])
-
-      //然后 移动selection
-      const point = EditorHelper.findPoint(editor, offset)
-
-      Transforms.select(editor, point)
-    }
+    deleteParagraph(editor)
 
     return
   }
@@ -354,36 +346,7 @@ const withShortcuts = editor => {
     deleteBackward(...args)
     console.log('delateBackward')
 
-    const { selection } = editor
-
-    //获取整个paragraph的text
-    const match = Editor.above(editor, {
-      match: n => Editor.isBlock(editor, n),
-    })
-
-    if (match) {
-      if (match[0].type !== 'paragraph') {
-        return
-      }
-
-      const [, paragraphPath] = match
-      const paragraphText = Editor.string(editor, paragraphPath)
-
-      const offset = EditorHelper.findOffset(editor, selection) - 1
-      const newParagraph = dealWithRegex(paragraphText)
-
-      //删除paragraph内容
-      const range = Editor.range(editor, paragraphPath)
-      Transforms.select(editor, range)
-      Transforms.delete(editor)
-      //然后...构建新的node, 插入
-      Transforms.insertFragment(editor, [newParagraph])
-
-      //然后 移动selection
-      const point = EditorHelper.findPoint(editor, offset)
-
-      Transforms.select(editor, point)
-    }
+    deleteParagraph(editor)
 
     return
   }
@@ -392,37 +355,7 @@ const withShortcuts = editor => {
     deleteFragment(...args)
     console.log('deleteFragment')
 
-
-    const { selection } = editor
-
-    //获取整个paragraph的text
-    const match = Editor.above(editor, {
-      match: n => Editor.isBlock(editor, n),
-    })
-
-    if (match) {
-      if (match[0].type !== 'paragraph') {
-        return
-      }
-
-      const [, paragraphPath] = match
-      const paragraphText = Editor.string(editor, paragraphPath)
-
-      const offset = EditorHelper.findOffset(editor, selection) - 1
-      const newParagraph = dealWithRegex(paragraphText)
-
-      //删除paragraph内容
-      const range = Editor.range(editor, paragraphPath)
-      Transforms.select(editor, range)
-      Transforms.delete(editor)
-      //然后...构建新的node, 插入
-      Transforms.insertFragment(editor, [newParagraph])
-
-      //然后 移动selection
-      const point = EditorHelper.findPoint(editor, offset)
-
-      Transforms.select(editor, point)
-    }
+    deleteParagraph(editor)
 
     return
   }
