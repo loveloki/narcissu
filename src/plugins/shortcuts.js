@@ -260,8 +260,9 @@ const withShortcuts = editor => {
     const { selection } = editor
 
     if (selection) {
-      const leaf = Editor.leaf(editor, selection)
-      const text = leaf[0].text.replace(/ /g, '')
+      const [node, path] = Editor.above(editor, {match: n => Editor.isBlock(editor, n)})
+      const text = Editor.string(editor, path)
+
       const firstLetter = text[0]
       const length = text.length
 
@@ -293,7 +294,6 @@ const withShortcuts = editor => {
         const type = 'fenced-code-blocks'
         const lang = theRestText
 
-        const path = Editor.path(editor, selection)
         const range = Editor.range(editor, path)
         Transforms.select(editor, range)
         Transforms.delete(editor)
