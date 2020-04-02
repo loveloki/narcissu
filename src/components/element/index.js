@@ -51,7 +51,7 @@ const Element = props => {
     case 'image':
       return <Image {...props} />
     default:
-      return <Default {...props} isTypeTipOpen={isTypeTipOpen} />
+      return <P {...props} isTypeTipOpen={isTypeTipOpen} />
   }
 }
 
@@ -190,7 +190,7 @@ const Image = props => {
   )
 }
 
-const Default = props => {
+const P = props => {
   const { attributes, children, isTypeTipOpen } = props
   const focused = useFocused()
   const selected = useSelected()
