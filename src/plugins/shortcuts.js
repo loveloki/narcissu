@@ -172,11 +172,6 @@ const deleteParagraph = editor => {
     const offset = EditorHelper.findOffset(editor, selection) - 1
     const newParagraph = dealWithRegex(paragraphText)
 
-    const child = newParagraph.children
-    if (child.length === 1) {
-      return
-    }
-
     //因为如果inline，void在最后一个，会无法删除，所以先找到这种节点删除
     const images = Array.from(
       Editor.nodes(editor, {
