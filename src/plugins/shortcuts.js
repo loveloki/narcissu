@@ -162,12 +162,12 @@ const deleteParagraph = editor => {
   })
 
   if (match) {
-    if (match[0].type !== 'paragraph') {
+    const [node, paragraphPath] = match
+    const paragraphText = Editor.string(editor, paragraphPath)
+
+    if (node.type !== 'paragraph' || paragraphText === '') {
       return
     }
-
-    const [, paragraphPath] = match
-    const paragraphText = Editor.string(editor, paragraphPath)
 
     const offset = EditorHelper.findOffset(editor, selection)
     const newParagraph = dealWithRegex(paragraphText)
