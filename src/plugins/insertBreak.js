@@ -10,17 +10,28 @@ const withInsertBreak = editor => {
     })
 
     if (match) {
-      const [block, ] = match
+      const [block, path] = match
       const { selection } = editor
 
       //获取文本节点
-      const leaf = Editor.leaf(editor, selection)
-      const text = leaf[0].text
+      const text = Editor.string(editor, path)
 
       const isPoint = Range.isCollapsed(selection)
 
       if (isPoint && text === '' && block.type !== 'paragraph') {
         editor.deleteBackward('character')
+
+        return
+      }
+
+      const [parent, ] = Editor.parent(editor, path)
+
+      //如果在引用块的空段落出按回车，将段落拆分出来
+      if (isPoint && text === '' && block.type === 'paragraph' && (parent.type === 'block-quote')) {
+        Transforms.liftNodes(editor, {
+          at: path,
+          voids: true,
+        })
 
         return
       }
