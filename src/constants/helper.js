@@ -30,11 +30,11 @@ const EditorHelper = {
     for (const path of allPrevious) {
       const string = Editor.string(editor, path)
 
-      if (flag >= string.length) {
+      if (flag > string.length) {
         flag -= string.length
       } else {
         point.path = path
-        point.offset = flag + 1
+        point.offset = flag
         break
       }
     }

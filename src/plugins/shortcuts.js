@@ -169,7 +169,7 @@ const deleteParagraph = editor => {
     const [, paragraphPath] = match
     const paragraphText = Editor.string(editor, paragraphPath)
 
-    const offset = EditorHelper.findOffset(editor, selection) - 1
+    const offset = EditorHelper.findOffset(editor, selection)
     const newParagraph = dealWithRegex(paragraphText)
 
     //因为如果inline，void在最后一个，会无法删除，所以先找到这种节点删除
