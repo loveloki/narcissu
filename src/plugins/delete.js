@@ -1,5 +1,5 @@
 //按下删除键的行为
-import { Editor, Transforms, Range, Point } from 'slate'
+import { Editor, Transforms, Range, Point, Path } from 'slate'
 
 const withDelete = editor => {
   const { deleteBackward } = editor
@@ -19,40 +19,68 @@ const withDelete = editor => {
         if (block.type !== 'paragraph' && Point.equals(selection.anchor, start)) {
           Transforms.setNodes(editor, {type: 'paragraph'})
 
-          if (block.type === 'list-item') {
-            //获取本text节点的父节点的父节点，即ul所在节点
-            const parent = Editor.parent(editor, selection)
-            const pParent = Editor.parent(editor, parent[1])
-
-            //获取节点类型，子节点数量，本节点是否为最后一个节点
-            const type = pParent[0].type
-            const childrenNumber = pParent[0].children.length
-            const lastChild = pParent[0].children[childrenNumber - 1]
-            const flag = lastChild.children === block.children
-
-
-            if (type === 'bulleted-list' && childrenNumber === 1) {
-              //如果只有一个节点，直接拆封
-              Transforms.unwrapNodes(editor,{
-                match: n => n.type === 'bulleted-list',
-              })
-            } else if (flag) {
-              //如果有其他节点，并且本节点位于最后一个，向上拆分提升
-              Transforms.liftNodes(editor, {
-                match: n => n.type === 'paragraph',
-              })
-            } else {
-              //否则本节点在中间，执行默认删除
-              deleteBackward(...args)
-            }
-
-          }
-
           if (block.type === 'thematic-break') {
             Transforms.removeNodes(editor)
           }
 
           return
+        }
+
+        if (block.type === 'paragraph' && Point.equals(selection.anchor, start)) {
+          //获取本text节点的父节点的父节点，比如list-item节点
+          const [parent, parentPath] = Editor.parent(editor, path)
+          const [first, firstPath] = Editor.first(editor, parentPath)
+          const firstStart = Editor.start(editor, firstPath)
+
+          if (parent.type === 'list-item' && Point.equals(selection.anchor, firstStart)) {
+            const [ul, ulPath] = Editor.parent(editor, parentPath)
+
+            const match = Editor.previous(editor, {
+              at: parentPath,
+              match: n => n.type === 'list-item'
+            })
+
+            let first = true
+            if (match) {
+              const [node, path] = match
+              first = Path.isChild(path, ulPath) ? false : true
+            }
+
+            //如果是第一个list-item节点
+            if (first) {
+              //将list-item解封
+              Transforms.unwrapNodes(editor, { match: n => n.type === 'list-item'})
+
+              //获取被解封的paragraph
+              const array = Array.from(Editor.nodes(editor, {at:ulPath, match: n => n.type === 'paragraph'})).filter(([node, path]) => path.length === 2).reverse()
+
+              //向上提升它们
+              array.forEach(([node, path]) => {
+                Transforms.liftNodes(editor, {at: path, match: n => n.type === 'paragraph'})
+              })
+            } else {
+              //将list-item解封
+              Transforms.unwrapNodes(editor, { match: n => n.type === 'list-item'})
+
+              //获取被解封的paragraph
+              const array = Array.from(Editor.nodes(editor, {at:ulPath, match: n => n.type === 'paragraph'})).filter(([node, path]) => path.length === 2)
+
+              const path = Editor.path(editor, editor.selection)
+              const at = Path.parent(path)
+              const prevPath = Path.previous(at)
+              const basePath = Editor.path(editor, prevPath, {edge: 'end'}).slice(0, 3)
+              const last = basePath[basePath.length - 1]
+
+              //移动到上一个list-item末尾
+              for (let i = 0; i < array.length; i++) {
+                const to = basePath.slice(0, 2).concat(last + i + 1)
+
+                Transforms.moveNodes(editor, {at: at, to: to})
+              }
+            }
+
+            return
+          }
         }
       }
     }

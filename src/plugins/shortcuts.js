@@ -330,8 +330,6 @@ const withShortcuts = editor => {
 
   editor.deleteForward = (...args) => {
     deleteForward(...args)
-    console.log('deleteForward')
-
     deleteParagraph(editor)
 
     return
@@ -339,8 +337,6 @@ const withShortcuts = editor => {
 
   editor.deleteBackward = (...args) => {
     deleteBackward(...args)
-    console.log('delateBackward')
-
     deleteParagraph(editor)
 
     return
@@ -348,8 +344,6 @@ const withShortcuts = editor => {
 
   editor.deleteFragment = (...args) => {
     deleteFragment(...args)
-    console.log('deleteFragment')
-
     deleteParagraph(editor)
 
     return
