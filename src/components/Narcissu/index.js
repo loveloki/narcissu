@@ -134,7 +134,7 @@ const defaultValue = [
   { type: 'thematic-break', children: [{ text: '******' }]},
   { type: 'fenced-code-blocks', children: [{ text: '围栏代码块' }]},
   { type: 'block-quote', children: [{ text: '引用' }]},
-  { type: 'bulleted-list', children: [{ type: 'list-item', children: [{ text: '列表' }]},]},
+  { type: 'bulleted-list', children: [{ type: 'list-item', children: [{ type: 'paragraph', children: [{ text: '列表' }]}]},]},
 ]
 
 export default Narcissu
