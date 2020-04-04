@@ -26,12 +26,35 @@ const withInsertBreak = editor => {
 
       const [parent, ] = Editor.parent(editor, path)
 
-      //如果在引用块的空段落出按回车，将段落拆分出来
+      //如果在引用块的空段落出按回车，将段落向上提升拆分出来
       if (isPoint && text === '' && block.type === 'paragraph' && (parent.type === 'block-quote')) {
         Transforms.liftNodes(editor, {
           at: path,
           voids: true,
         })
+
+        return
+      }
+
+      if (block.type === 'paragraph' && parent.type === 'list-item') {
+        if (text !== '') {
+          //list spilt
+          Transforms.splitNodes(editor, {
+            at: selection,
+            match: n => n.type === 'list-item',
+            always: true,
+          })
+        } else {
+          //list delete and lift,提升拆分两次，提升到ul同级节点
+          Transforms.liftNodes(editor, {
+            at: path,
+            voids: true,
+          })
+          Transforms.liftNodes(editor, {
+            at: selection,
+            voids: true,
+          })
+        }
 
         return
       }
