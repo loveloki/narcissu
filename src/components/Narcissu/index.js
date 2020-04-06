@@ -13,6 +13,7 @@ import Leaf from '../leaf'
 
 import './index.css'
 import defaultConfig from '../../constants/config'
+import Catalog from '../catalog'
 
 const Home = () => {
   const [value, setValue] = useState(StorageManager.get('value') || defaultValue)
@@ -21,6 +22,15 @@ const Home = () => {
   const renderLeaf = useCallback(props => <Leaf {...props} />, [])
 
   const editor = useMemo(() => withPlugins(withReact(withHistory(createEditor()))), [])
+
+  const getCatalog = valueArray => {
+    const catalog = []
+    valueArray.forEach(node => {
+      node.type.includes('heading') && catalog.push(node)
+    })
+
+    return catalog
+  }
 
   //检查是否初始化
   const initialized = StorageManager.get('initialized')
@@ -81,6 +91,7 @@ const Home = () => {
         return close + " " + position
         })()}>
         <div className='content'>
+          <Catalog catalogArray={getCatalog(value)} />
         </div>
       </div>
       <main className='main'>

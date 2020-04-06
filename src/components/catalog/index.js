@@ -1,0 +1,92 @@
+import React from 'react'
+import { Node } from 'slate'
+
+const Catalog = props => {
+  const { catalogArray } = props
+
+  const list = {
+    children: [],
+  }
+  const getLevel = text => {
+    switch (text) {
+      case 'heading-one':
+        return 1
+      case 'heading-two':
+        return 2
+      case 'heading-three':
+        return 3
+      case 'heading-four':
+        return 4
+      case 'heading-five':
+        return 5
+      case 'heading-six':
+        return 6
+      default:
+        break;
+    }
+  }
+
+  let last = list
+  for (let i = 0; i < catalogArray.length; i++) {
+    const node = catalogArray[i]
+
+    const title = {
+      text: Node.string(node),
+      level: getLevel(node.type),
+      parent: null,
+      children: [],
+    }
+
+    if (i === 0) {
+      title.parent = list
+      last.children.push(title)
+
+      last = last.children[last.children.length - 1]
+    } else {
+      while (title.level < last.level) {
+        last = last.parent
+      }
+
+      if(title.level > last.level) {
+        title.parent = last
+        last.children.push(title)
+
+        last = last.children[last.children.length - 1]
+      } else if (title.level === last.level) {
+        title.parent = last.parent
+        last.parent.children.push(title)
+
+        last = last.parent.children[last.parent.children.length - 1]
+      }
+    }
+  }
+
+  const renderUl = (list) => {
+
+    return (
+      <ul>
+        {list.children
+        && list.children.map((node, index) => {
+          const { text, children } = node
+
+          return (
+            <li key={index}>
+              {text}
+              {!!children.length && renderUl({children})}
+            </li>
+          )
+        })}
+      </ul>
+    )
+
+  }
+
+  return (
+    <nav>
+      <div>目录</div>
+      {renderUl(list)}
+    </nav>
+  )
+}
+
+export default Catalog
