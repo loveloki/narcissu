@@ -73,7 +73,7 @@ const Catalog = props => {
         top: heading.offsetTop - 50,
       })
     }
-    
+
     return (
       <ul>
         {list.children
@@ -81,8 +81,8 @@ const Catalog = props => {
           const { text, children, id } = node
 
           return (
-            <li key={index} onClick={onClick} data-id={id} >
-              {text}
+            <li key={index}>
+              <div onClick={onClick} data-id={id}>{text}</div>
               {!!children.length && renderUl({children})}
             </li>
           )
