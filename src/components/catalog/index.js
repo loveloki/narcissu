@@ -1,5 +1,6 @@
 import React from 'react'
 import { Node } from 'slate'
+import './index.css'
 
 const Catalog = props => {
   const { catalogArray } = props
@@ -63,6 +64,7 @@ const Catalog = props => {
   }
 
   const renderUl = (list) => {
+    const level = list.children[0].level
     const onClick = e => {
       e.preventDefault()
       const id = e.target.dataset.id
@@ -75,7 +77,7 @@ const Catalog = props => {
     }
 
     return (
-      <ul>
+      <ul className={'ul-' + level}>
         {list.children
         && list.children.map((node, index) => {
           const { text, children, id } = node
@@ -93,9 +95,9 @@ const Catalog = props => {
   }
 
   return (
-    <nav>
+    <nav className='catalog'>
       <div>目录</div>
-      {renderUl(list)}
+      {list.children.length > 0 && renderUl(list)}
     </nav>
   )
 }

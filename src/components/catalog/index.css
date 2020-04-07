@@ -1,0 +1,28 @@
+.catalog {
+  user-select: none;
+}
+.catalog ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+.catalog li div:hover {
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.ul-2 li div {
+  padding-left: 10px;
+}
+.ul-3 li div {
+  padding-left: 20px;
+}
+.ul-4 li div {
+  padding-left: 30px;
+}
+.ul-5 li div {
+  padding-left: 40px;
+}
+.ul-6 li div {
+  padding-left: 50px;
+}
