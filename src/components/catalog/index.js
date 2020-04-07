@@ -33,6 +33,7 @@ const Catalog = props => {
     const title = {
       text: Node.string(node),
       level: getLevel(node.type),
+      id: node.id,
       parent: null,
       children: [],
     }
@@ -62,15 +63,25 @@ const Catalog = props => {
   }
 
   const renderUl = (list) => {
+    const onClick = e => {
+      e.preventDefault()
+      const id = e.target.dataset.id
+      const heading = document.querySelector('#' + id)
 
+      window.scrollTo({
+        behavior: 'smooth',
+        top: heading.offsetTop - 50,
+      })
+    }
+    
     return (
       <ul>
         {list.children
         && list.children.map((node, index) => {
-          const { text, children } = node
+          const { text, children, id } = node
 
           return (
-            <li key={index}>
+            <li key={index} onClick={onClick} data-id={id} >
               {text}
               {!!children.length && renderUl({children})}
             </li>
