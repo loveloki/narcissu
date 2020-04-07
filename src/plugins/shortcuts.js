@@ -232,6 +232,10 @@ const withShortcuts = editor => {
       if (type) {
         const props = {type}
 
+        if (type.includes('heading')) {
+          props.id = 'h' + path
+        }
+
         //删除shortcut字符
         Transforms.select(editor, range)
         Transforms.delete(editor)

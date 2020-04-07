@@ -29,6 +29,7 @@ const Element = props => {
     case 'heading-four':
     case 'heading-five':
     case 'heading-six':
+      return <Heading {...props} type={typeList[element.type]} isTypeTipOpen={isTypeTipOpen} />
     case 'thematic-break':
     case 'fenced-code-blocks':
       return <LeafBlocks {...props} type={typeList[element.type]} isTypeTipOpen={isTypeTipOpen} />
@@ -60,6 +61,21 @@ const LeafBlocks = props => {
   const Type = type
   const selected = useSelected()
   const focused = useFocused()
+
+  if (type === 'hr') {
+    return <ThematicBreak {...props} selected={selected} focused={focused} />
+  } else if (type === 'code') {
+    return <FencedCodeBlocks {...props} selected={selected} focused={focused} />
+  }
+
+  return <Type data-tip={type} className={(isTypeTipOpen && focused && selected) ? 'tip' : ''} {...attributes}>{children}</Type>
+}
+
+const Heading = props => {
+  const { attributes, children, type, isTypeTipOpen, element } = props
+  const Type = type
+  const selected = useSelected()
+  const focused = useFocused()
   const adjustClassName = (() => {
     switch (type) {
       case 'h1':
@@ -75,13 +91,7 @@ const LeafBlocks = props => {
     }
   })()
 
-  if (type === 'hr') {
-    return <ThematicBreak {...props} selected={selected} focused={focused} />
-  } else if (type === 'code') {
-    return <FencedCodeBlocks {...props} selected={selected} focused={focused} />
-  }
-
-  return <Type data-tip={type} className={(isTypeTipOpen && focused && selected) ? 'tip' + adjustClassName : ''} {...attributes}>{children}</Type>
+  return <Type data-tip={type} id={element.id} className={(isTypeTipOpen && focused && selected) ? 'tip' + adjustClassName : ''} {...attributes}>{children}</Type>
 }
 
 const ThematicBreak = props => {
