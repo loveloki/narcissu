@@ -52,7 +52,7 @@ const withDelete = editor => {
               Transforms.unwrapNodes(editor, { match: n => n.type === 'list-item'})
 
               //获取被解封的paragraph
-              const array = Array.from(Editor.nodes(editor, {at:ulPath, match: n => n.type === 'paragraph'})).filter(([node, path]) => path.length === 2).reverse()
+              const array = Array.from(Editor.nodes(editor, {at:ulPath, match: n => n.type === 'paragraph'})).filter(([node, path]) => path.length === ulPath.length + 1).reverse()
 
               //向上提升它们
               array.forEach(([node, path]) => {
@@ -63,17 +63,17 @@ const withDelete = editor => {
               Transforms.unwrapNodes(editor, { match: n => n.type === 'list-item'})
 
               //获取被解封的paragraph
-              const array = Array.from(Editor.nodes(editor, {at:ulPath, match: n => n.type === 'paragraph'})).filter(([node, path]) => path.length === 2)
+              const array = Array.from(Editor.nodes(editor, {at:ulPath, match: n => n.type === 'paragraph'})).filter(([node, path]) => path.length === ulPath.length + 1)
 
               const path = Editor.path(editor, editor.selection)
               const at = Path.parent(path)
               const prevPath = Path.previous(at)
-              const basePath = Editor.path(editor, prevPath, {edge: 'end'}).slice(0, 3)
+              const basePath = Editor.path(editor, prevPath, {edge: 'end'}).slice(0, prevPath.length + 1)
               const last = basePath[basePath.length - 1]
 
               //移动到上一个list-item末尾
               for (let i = 0; i < array.length; i++) {
-                const to = basePath.slice(0, 2).concat(last + i + 1)
+                const to = basePath.slice(0, basePath.length - 1).concat(last + i + 1)
 
                 Transforms.moveNodes(editor, {at: at, to: to})
               }
