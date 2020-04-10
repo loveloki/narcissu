@@ -14,6 +14,7 @@ import Leaf from '../leaf'
 import './index.css'
 import defaultConfig from '../../constants/config'
 import Catalog from '../catalog'
+import serialize from '../../constants/serializing'
 
 const Home = () => {
   const [value, setValue] = useState(StorageManager.get('value') || defaultValue)
@@ -80,6 +81,17 @@ const Home = () => {
       e.preventDefault()
 
       Transforms.insertText(editor, '\n')
+    } else if(e.key === 's' && e.ctrlKey) {
+      e.preventDefault()
+
+      const md = serialize(value)
+      const a = document.createElement('a')
+      a.download = 'narcissu.md'
+      const blob = new Blob([md], {
+        type: 'text/markdown',
+      })
+      a.href = URL.createObjectURL(blob)
+      a.click()
     }
   }
 
