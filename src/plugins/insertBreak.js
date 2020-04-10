@@ -1,5 +1,5 @@
 //按下回车键的行为
-import { Editor, Range, Transforms } from 'slate'
+import { Editor, Range, Transforms, Path } from 'slate'
 
 const withInsertBreak = editor => {
   const { insertBreak } = editor
@@ -24,7 +24,7 @@ const withInsertBreak = editor => {
         return
       }
 
-      const [parent, ] = Editor.parent(editor, path)
+      const [parent, parentPath] = Editor.parent(editor, path)
 
       //如果在引用块的空段落出按回车，将段落向上提升拆分出来
       if (isPoint && text === '' && block.type === 'paragraph' && (parent.type === 'block-quote')) {
@@ -36,7 +36,19 @@ const withInsertBreak = editor => {
         return
       }
 
-      if (block.type === 'paragraph' && parent.type === 'list-item') {
+      if (block.type === 'paragraph' && parent.type === 'list-item' && parent.children.length === 1) {
+        const [, ulPath] = Editor.parent(editor, parentPath)
+        const match = Editor.next(editor, {
+          at: parentPath,
+          match: n => n.type === 'list-item'
+        })
+
+        let last = true
+        if (match) {
+          const [, path] = match
+          last = Path.isChild(path, ulPath) ? false : true
+        }
+
         if (text !== '') {
           //list spilt
           Transforms.splitNodes(editor, {
@@ -44,7 +56,7 @@ const withInsertBreak = editor => {
             match: n => n.type === 'list-item',
             always: true,
           })
-        } else {
+        } else if (last) {
           //list delete and lift,提升拆分两次，提升到ul同级节点
           Transforms.liftNodes(editor, {
             at: path,
@@ -54,6 +66,27 @@ const withInsertBreak = editor => {
             at: selection,
             voids: true,
           })
+        } else {
+          Transforms.delete(editor, {
+            at: parentPath,
+          })
+        }
+
+        return
+      }
+      if (block.type === 'paragraph' && parent.type === 'list-item' && parent.children.length !== 1) {
+        if (text === '') {
+          //list lift and setNodes
+          Transforms.liftNodes(editor, {
+            at: editor.selection,
+            match: n => n.type === 'paragraph',
+            always: true,
+          })
+          Transforms.setNodes(editor,{
+            type: 'list-item'
+          })
+        } else {
+          insertBreak()
         }
 
         return
