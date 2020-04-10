@@ -143,8 +143,8 @@ const defaultValue = [
   { type: 'heading-one', id: 'h3', children: [{ text: '标题h1~h6' }]},
   { type: 'paragraph', children: [{ text: '强制换行' }]},
   { type: 'thematic-break', children: [{ text: '******' }]},
-  { type: 'fenced-code-blocks', children: [{ text: '围栏代码块' }]},
-  { type: 'block-quote', children: [{ text: '引用' }]},
+  { type: 'fenced-code-blocks', lang: 'jsx', children: [{ text: '围栏代码块' }]},
+  { type: 'block-quote', children: [{ type: 'paragraph', children: [{ text: '引用' }]}]},
   { type: 'bulleted-list', children: [{ type: 'list-item', children: [{ type: 'paragraph', children: [{ text: '列表' }]}]},]},
 ]
 
