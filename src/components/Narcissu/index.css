@@ -31,7 +31,7 @@ html, body, #root{
 
 /* #region 使用sticky固定 */
 
-.side .content {
+.side{
   position: sticky;
   top: 0;
   height: 100vh;

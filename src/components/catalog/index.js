@@ -96,7 +96,6 @@ const Catalog = props => {
 
   return (
     <nav className='catalog'>
-      <div>目录</div>
       {list.children.length > 0 && renderUl(list)}
     </nav>
   )

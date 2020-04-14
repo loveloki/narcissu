@@ -1,6 +1,8 @@
 import React from 'react'
 import Catalog from '../catalog'
 import StorageManager from '../../constants/storage'
+import { useState } from 'react'
+import './index.css'
 
 const getCatalog = valueArray => {
   const catalog = []
@@ -12,6 +14,7 @@ const getCatalog = valueArray => {
 }
 
 const Side = props => {
+  const [title, setTitle] = useState('file')
   const { value } = props
 
   const config = StorageManager.all()
@@ -22,8 +25,15 @@ const Side = props => {
       const position = config.sidePosition === 'left' ? 'side-position-left' : 'side-position-right'
       return close + " " + position
       })()}>
+      <nav className='title'>
+        <span onClick={e => setTitle('file')}>文件</span>
+        <span onClick={e => setTitle('catalog')}>目录</span>
+      </nav>
       <div className='content'>
-        <Catalog catalogArray={getCatalog(value)} />
+        {title === 'catalog'
+        ? <Catalog catalogArray={getCatalog(value)} />
+        : <div>file</div>
+        }
       </div>
     </div>
   )
