@@ -11,6 +11,10 @@
   height: 50px;
 }
 
+.side .title .selected {
+  border-bottom: solid 5px #ab7d97;
+}
+
 .title span{
   flex: 1;
   line-height: 50px;

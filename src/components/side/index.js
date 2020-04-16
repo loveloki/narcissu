@@ -27,8 +27,8 @@ const Side = props => {
       return close + " " + position
       })()}>
       <nav className='title'>
-        <span onClick={e => setTitle('file')}>文件</span>
-        <span onClick={e => setTitle('catalog')}>目录</span>
+        <span className={ title === 'file' ? 'selected' : '' } onClick={e => setTitle('file')}>文件</span>
+        <span className={ title === 'catalog' ? 'selected' : '' } onClick={e => setTitle('catalog')}>目录</span>
       </nav>
       <div className='content'>
         {title === 'catalog'
