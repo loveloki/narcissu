@@ -88,7 +88,7 @@ const Home = () => {
 
   return (
     <>
-      <Side value={value} />
+      <Side setValue={setValue} value={value} editor={editor} />
       <main className='main'>
         <header>
           <Link to='/settings'>

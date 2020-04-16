@@ -3,6 +3,7 @@ import Catalog from '../catalog'
 import StorageManager from '../../constants/storage'
 import { useState } from 'react'
 import './index.css'
+import File from '../file'
 
 const getCatalog = valueArray => {
   const catalog = []
@@ -15,7 +16,7 @@ const getCatalog = valueArray => {
 
 const Side = props => {
   const [title, setTitle] = useState('file')
-  const { value } = props
+  const { value, setValue, editor } = props
 
   const config = StorageManager.all()
 
@@ -32,7 +33,7 @@ const Side = props => {
       <div className='content'>
         {title === 'catalog'
         ? <Catalog catalogArray={getCatalog(value)} />
-        : <div>file</div>
+        : <File editor={editor} setValue={setValue} />
         }
       </div>
     </div>
