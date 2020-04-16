@@ -28,7 +28,7 @@ const File = props => {
         console.warn('打开文件失败', error)
       })
     }
-    
+
     //file存在时再读取，避免多次快速打开文件然后取消产生的file未定义bug
     file && reader.readAsText(file)
   }

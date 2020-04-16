@@ -1,3 +1,18 @@
 .file input {
   display: none;
 }
+
+.file div {
+  display: flex;
+}
+
+.file div span, .file div label {
+  flex: 1;
+  padding: 5px;
+  border-bottom: solid 1px #000;
+  text-align: center;
+  cursor: pointer;
+}
+.file div span:hover, .file div label:hover {
+  background-color: #fff;
+}
