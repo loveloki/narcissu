@@ -33,9 +33,20 @@ const File = props => {
     file && reader.readAsText(file)
   }
 
+  const createNewFile = e => {
+    const empty = [
+      {
+        type: 'paragraph',
+        children: [{ text: '' }],
+      }
+    ]
+
+    setValue(empty)
+  }
+
   return (
     <div className='file'>
-      <div><span className='new'>新建</span></div>
+      <div><span className='new' onClick={createNewFile}>新建</span></div>
       <div>
         <input type="file" accept='.md' onChange={onFileOpen} name="open-file" id="open-file"/>
         <label htmlFor='open-file' className='open'>打开</label>
