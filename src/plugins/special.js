@@ -15,7 +15,7 @@ const withSpecial = editor => {
 
   editor.isInline = element => {
     switch (element.type) {
-      case 'image-box':
+      case 'inline-box':
       case 'image':
       case 'link':
       case 'code':

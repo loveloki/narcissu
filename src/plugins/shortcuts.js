@@ -102,7 +102,7 @@ const tokenize = (text) => {
                 { type: 'image', url: match[2],  children: [{ text: '' }] },
               ]
 
-              token.type = 'image-box'
+              token.type = 'inline-box'
               token.content = content
             } else if (type === 'code') {
               const content = [

@@ -47,7 +47,7 @@ const Element = props => {
       return <Strong {...props} />
     case 'em':
       return <Em {...props} />
-    case 'image-box':
+    case 'inline-box':
       return <ImageBox {...props} />
     case 'image':
       return <Image {...props} />
