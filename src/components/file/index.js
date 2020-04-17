@@ -5,7 +5,7 @@ import { ReactEditor } from 'slate-react'
 import StorageManager from '../../constants/storage'
 
 const File = props => {
-  const { editor ,setValue } = props
+  const { editor ,setValue, setFileName } = props
 
   const saveFile = () => {
     //把文件保存起来
@@ -58,6 +58,7 @@ const File = props => {
           behavior: 'smooth',
           top: 0,
         })
+        setFileName((new Date()).toLocaleDateString('zh'))
       }, error => {
         console.warn('打开文件失败', error)
       })
@@ -81,6 +82,7 @@ const File = props => {
     ]
 
     setValue(empty)
+    setFileName((new Date()).toLocaleDateString('zh'))
   }
 
   return (

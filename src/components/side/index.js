@@ -16,7 +16,7 @@ const getCatalog = valueArray => {
 
 const Side = props => {
   const [title, setTitle] = useState('file')
-  const { value, setValue, editor } = props
+  const { value, setValue, setFileName, editor } = props
 
   const config = StorageManager.all()
 
@@ -33,7 +33,7 @@ const Side = props => {
       <div className='content'>
         {title === 'catalog'
         ? <Catalog catalogArray={getCatalog(value)} />
-        : <File editor={editor} setValue={setValue} />
+        : <File editor={editor} setValue={setValue} setFileName={setFileName} />
         }
       </div>
     </div>

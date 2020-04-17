@@ -93,7 +93,7 @@ const Home = () => {
 
   return (
     <>
-      <Side setValue={setValue} value={value} editor={editor} />
+      <Side setValue={setValue} setFileName={setFileName} value={value} editor={editor} />
       <main className='main'>
         <header>
           <Link to='/settings'>
