@@ -2,11 +2,45 @@ import React from 'react'
 import './index.css'
 import deserialize from '../../constants/deserialize'
 import { ReactEditor } from 'slate-react'
+import StorageManager from '../../constants/storage'
 
 const File = props => {
   const { editor ,setValue } = props
 
+  const saveFile = () => {
+    //把文件保存起来
+    let name = StorageManager.get('fileName')
+    const value = StorageManager.get('value')
+
+    //加载的文件名
+    const loadFile = StorageManager.get('loadFile')
+
+    const files = StorageManager.get('files') || {}
+
+    //如果是读取的文件
+    if (loadFile) {
+      //如果改名了
+      name !== loadFile && delete files[loadFile]
+    } else {
+      //否则是新建的文件
+      //判断是不是存在重名
+      while (name === null || files[name]) {
+          name = window.prompt('请重新输入保存的文件名！', name)
+      }
+    }
+
+    files[name] = value
+    console.log(files)
+
+    StorageManager.set('files', files)
+  }
+
   const onFileOpen = e => {
+    //保存完进入新的文件
+    StorageManager.set('loadFile', false)
+
+    saveFile()
+
     //取消编辑器的选择，如果有选择可能会导致渲染后存在找不到路径的问题
     ReactEditor.deselect(editor)
 
@@ -34,6 +68,11 @@ const File = props => {
   }
 
   const createNewFile = e => {
+    //设置loadFile
+    StorageManager.set('loadFile', false)
+
+    saveFile()
+
     const empty = [
       {
         type: 'paragraph',
