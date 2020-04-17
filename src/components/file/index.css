@@ -4,12 +4,12 @@
 
 .file div {
   display: flex;
+  border-bottom: solid 1px #000;
 }
 
 .file div span, .file div label {
   flex: 1;
   padding: 5px;
-  border-bottom: solid 1px #000;
   text-align: center;
   cursor: pointer;
 }
