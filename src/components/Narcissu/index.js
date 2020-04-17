@@ -18,6 +18,7 @@ import Side from '../side'
 
 const Home = () => {
   const [value, setValue] = useState(StorageManager.get('value') || defaultValue)
+  const [fileName, setFileName] = useState(StorageManager.get('fileName') || (new Date()).toLocaleDateString('zh'))
 
   const renderElement = useCallback(props => <Element {...props} />, [])
   const renderLeaf = useCallback(props => <Leaf {...props} />, [])
@@ -41,6 +42,10 @@ const Home = () => {
   useEffect(() => {
     StorageManager.set('value', value)
   }, [value])
+
+  useEffect(() => {
+    StorageManager.set('fileName', fileName)
+  }, [fileName])
 
   const clickSideArrow = (event) => {
     const arrow = event.target.firstChild
@@ -96,6 +101,9 @@ const Home = () => {
               <css-icon class="icon-menu"></css-icon>
             </div>
           </Link>
+          <div className='file-name'>
+            <input type="text" value={fileName} name="file-name" id="file-name" onChange={e => setFileName(e.target.value)}/>
+          </div>
         </header>
         <main className='narcissu'>
           <Slate
