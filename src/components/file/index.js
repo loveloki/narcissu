@@ -72,6 +72,8 @@ const File = props => {
   }
 
   const createNewFile = e => {
+    ReactEditor.deselect(editor)
+    
     saveFile()
 
     //设置loadFile
@@ -89,6 +91,8 @@ const File = props => {
   }
 
   const loadFile = (name, value) => {
+    ReactEditor.deselect(editor)
+
     //如果相等，说明点击到了正在编辑的文件
     if (name === StorageManager.get('loadFile')) {
       return
