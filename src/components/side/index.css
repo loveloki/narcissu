@@ -4,6 +4,7 @@
 
 .side .content {
   height: calc(100vh - 50px);
+  overflow: auto;
 }
 
 .side .title {

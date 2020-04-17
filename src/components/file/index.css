@@ -4,6 +4,8 @@
 
 .file div {
   display: flex;
+}
+.file > div {
   border-bottom: solid 1px #000;
 }
 
@@ -16,3 +18,9 @@
 .file div span:hover, .file div label:hover {
   background-color: #fff;
 }
+
+.file-history {
+  display: flex;
+  flex-direction: column;
+}
+
