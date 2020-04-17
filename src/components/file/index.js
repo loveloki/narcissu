@@ -30,16 +30,16 @@ const File = props => {
     }
 
     files[name] = value
-    console.log(files)
 
     StorageManager.set('files', files)
   }
 
   const onFileOpen = e => {
+    saveFile()
+    
     //保存完进入新的文件
     StorageManager.set('loadFile', false)
 
-    saveFile()
 
     //取消编辑器的选择，如果有选择可能会导致渲染后存在找不到路径的问题
     ReactEditor.deselect(editor)
@@ -53,12 +53,12 @@ const File = props => {
       const newValue = deserialize(markdown)
 
       newValue.then(result => {
+        setFileName((new Date()).toLocaleDateString('zh'))
         setValue(result)
         window.scrollTo({
           behavior: 'smooth',
           top: 0,
         })
-        setFileName((new Date()).toLocaleDateString('zh'))
       }, error => {
         console.warn('打开文件失败', error)
       })
@@ -69,10 +69,10 @@ const File = props => {
   }
 
   const createNewFile = e => {
+    saveFile()
+
     //设置loadFile
     StorageManager.set('loadFile', false)
-
-    saveFile()
 
     const empty = [
       {
@@ -81,9 +81,20 @@ const File = props => {
       }
     ]
 
-    setValue(empty)
     setFileName((new Date()).toLocaleDateString('zh'))
+    setValue(empty)
   }
+
+  const loadFile = (name, value) => {
+    saveFile()
+
+    StorageManager.set('loadFile', name)
+
+    setFileName(name)
+    setValue(value)
+  }
+
+  const files = StorageManager.get('files')
 
   return (
     <div className='file'>
@@ -91,6 +102,12 @@ const File = props => {
       <div>
         <input type="file" accept='.md' onChange={onFileOpen} name="open-file" id="open-file"/>
         <label htmlFor='open-file' className='open'>打开</label>
+      </div>
+      <div className='file-history'>
+        <span>已保存文件</span>
+        {files &&
+        Object.entries(files).map(([name, value]) => <div key={name} ><span onClick={e => loadFile(name, value)}>{name}</span></div>)
+        }
       </div>
     </div>
   )
