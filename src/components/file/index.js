@@ -3,9 +3,11 @@ import './index.css'
 import deserialize from '../../constants/deserialize'
 import { ReactEditor } from 'slate-react'
 import StorageManager from '../../constants/storage'
+import { useState } from 'react'
 
 const File = props => {
   const { editor ,setValue, setFileName } = props
+  const [files, setFiles] = useState(StorageManager.get('files') || {})
 
   const saveFile = () => {
     //把文件保存起来
@@ -32,11 +34,12 @@ const File = props => {
     files[name] = value
 
     StorageManager.set('files', files)
+    setFiles(files)
   }
 
   const onFileOpen = e => {
     saveFile()
-    
+
     //保存完进入新的文件
     StorageManager.set('loadFile', false)
 
@@ -93,8 +96,6 @@ const File = props => {
     setFileName(name)
     setValue(value)
   }
-
-  const files = StorageManager.get('files')
 
   return (
     <div className='file'>
