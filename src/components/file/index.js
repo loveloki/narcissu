@@ -89,6 +89,11 @@ const File = props => {
   }
 
   const loadFile = (name, value) => {
+    //如果相等，说明点击到了正在编辑的文件
+    if (name === StorageManager.get('loadFile')) {
+      return
+    }
+
     saveFile()
 
     StorageManager.set('loadFile', name)
