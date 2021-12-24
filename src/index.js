@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Narcissu from './components/narcissu';
+import Narcissu from './components/Narcissu';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<Narcissu />, document.getElementById('root'));
